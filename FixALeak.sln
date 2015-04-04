@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Express 2013 for Web
+VisualStudioVersion = 12.0.31101.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FixALeak.Web", "FixALeak.Web\FixALeak.Web.csproj", "{9447D218-5DAB-4CFE-BCC7-2C8FA384A42B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FixALeak.API", "FixALeak.API.\FixALeak.API.csproj", "{BD9B3AA2-D31D-4E0C-9904-3ED92A3DADBF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9447D218-5DAB-4CFE-BCC7-2C8FA384A42B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9447D218-5DAB-4CFE-BCC7-2C8FA384A42B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9447D218-5DAB-4CFE-BCC7-2C8FA384A42B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9447D218-5DAB-4CFE-BCC7-2C8FA384A42B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BD9B3AA2-D31D-4E0C-9904-3ED92A3DADBF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BD9B3AA2-D31D-4E0C-9904-3ED92A3DADBF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BD9B3AA2-D31D-4E0C-9904-3ED92A3DADBF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BD9B3AA2-D31D-4E0C-9904-3ED92A3DADBF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

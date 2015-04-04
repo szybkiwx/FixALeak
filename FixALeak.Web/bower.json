@@ -1,0 +1,24 @@
+{
+  "name": "FixALeak.Web",
+  "version": "0.0.0",
+  "authors": [
+    "szybkiwx <andrzej.dajnowski@gmail.com>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular-route": "~1.3.15",
+    "angular": "~1.3.15",
+    "bootstrap": "~3.3.4",
+    "angular-local-storage": "~0.1.5"
+  },
+  "devDependencies": {
+    "jslint": "~2013.11.23"
+  }
+}
