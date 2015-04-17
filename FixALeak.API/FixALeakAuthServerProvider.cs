@@ -1,4 +1,5 @@
 ﻿using FixALeak.API.Models;
+using FixALeak.API.Models.Auth;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.Owin.Security.OAuth;
 using System;
@@ -20,11 +21,12 @@ namespace FixALeak.API
         public override async Task GrantResourceOwnerCredentials(OAuthGrantResourceOwnerCredentialsContext context)
         {
 
-            context.OwinContext.Response.Headers.Add("Access-Control-Allow-Origin", new[] { "*" });
+            //context.OwinContext.Response.Headers.Add("Access-Control-Allow-Origin", new[] { "*" });
+            //context.OwinContext.Response.Headers.Add("Access-Control-Allow-Methods", new[] {"GET", "POST", "OPTIONS", "PUT", "DELETE" });
 
-            using (AuthRepository _repo = new AuthRepository())
+            using (AuthRepository repo = new AuthRepository())
             {
-                IdentityUser user = await _repo.FindUser(context.UserName, context.Password);
+                IdentityUser user = await repo.FindUser(context.UserName, context.Password);
 
                 if (user == null)
                 {

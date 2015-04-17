@@ -61,9 +61,11 @@
     <Content Include="app\js\controllers\LoginController.js" />
     <Content Include="app\js\controllers\SignupController.js" />
     <Content Include="app\js\directives\NavigationDirective.js" />
+    <Content Include="app\js\services\AccountResource.js" />
     <Content Include="app\js\services\AuthInterceptorService.js" />
     <Content Include="app\js\services\AuthService.js" />
     <Content Include="app\js\controllers\HomeController.js" />
+    <Content Include="app\js\services\TokenResource.js" />
     <Content Include="app\scss\app.scss" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>

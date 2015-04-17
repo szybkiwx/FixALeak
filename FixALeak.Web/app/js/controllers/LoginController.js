@@ -10,16 +10,13 @@
         $scope.message = "";
 
         $scope.login = function () {
-
-            AuthService.login($scope.loginData).then(function (response) {
-
-                $location.path('/orders');
-
-            },
-             function (err) {
-                 $scope.message = err.error_description;
-             });
+            AuthService.login($scope.loginData)
+                .then(function (response) {
+                        $location.path('/orders');
+                })
+                .catch(function (err) {
+                        $scope.message = err.error_description;
+                });
         };
-
     }]);
 }());

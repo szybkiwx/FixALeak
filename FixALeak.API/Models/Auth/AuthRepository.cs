@@ -6,7 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 
-namespace FixALeak.API.Models
+namespace FixALeak.API.Models.Auth
 {
     public class AuthRepository : IDisposable
     {

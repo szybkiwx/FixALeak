@@ -19,6 +19,7 @@
     "angular-local-storage": "~0.1.5"
   },
   "devDependencies": {
-    "jslint": "~2013.11.23"
+    "jslint": "~2013.11.23",
+    "angular-resource": "~1.3.15"
   }
 }

@@ -15,9 +15,10 @@ namespace FixALeak.API
         public void Configuration(IAppBuilder app)
         {
             HttpConfiguration config = new HttpConfiguration();
+            app.UseCors(Microsoft.Owin.Cors.CorsOptions.AllowAll);
             ConfigreOAuth(app);
             WebApiConfig.Register(config);
-            app.UseCors(Microsoft.Owin.Cors.CorsOptions.AllowAll);
+           
             app.UseWebApi(config);
         }
 

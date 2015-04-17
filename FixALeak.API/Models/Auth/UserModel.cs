@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 
-namespace FixALeak.API.Models
+namespace FixALeak.API.Models.Auth
 {
     public class UserModel
     {

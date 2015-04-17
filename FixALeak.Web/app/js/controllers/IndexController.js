@@ -7,7 +7,7 @@
             $location.path('/home');
         };
 
-        $scope.authentication = AuthService.authentication;
+        $scope.authentication = AuthService.getAuthentication();
 
     }]);
 }());

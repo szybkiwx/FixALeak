@@ -1,5 +1,5 @@
 ﻿var App = angular.module('FixALeak', [
-  'ngRoute', 'LocalStorageModule'
+  'ngRoute', 'LocalStorageModule', 'ngResource'
 ]);
 
 App.config(['$routeProvider',
@@ -26,9 +26,13 @@ App.config(['$routeProvider',
         });
   }]);
 
-
+App.run(['AuthService', function (AuthService) {
+    AuthService.fillAuthData();
+}]);
 
 
 App.config(function ($httpProvider) {
     $httpProvider.interceptors.push('AuthInterceptorService');
 });
+
+App.value("apiUrl", 'http://localhost:25366');

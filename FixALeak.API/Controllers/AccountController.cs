@@ -1,4 +1,5 @@
 ﻿using FixALeak.API.Models;
+using FixALeak.API.Models.Auth;
 using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;
@@ -15,14 +16,15 @@ namespace FixALeak.API.Controllers
     {
         private AuthRepository _repo = null;
 
-        public AccountController()
+        public AccountController(AuthRepository repo)
         {
-            _repo = new AuthRepository();
+            _repo = repo;
         }
 
-        // POST api/Account/Register
+
         [AllowAnonymous]
-        [Route("Register")]
+        [Route("")]
+        [HttpPost]
         public async Task<IHttpActionResult> Register(UserModel userModel)
         {
             if (!ModelState.IsValid)
