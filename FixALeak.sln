@@ -1,11 +1,19 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Express 2013 for Web
+# Visual Studio 2013
 VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FixALeak.Web", "FixALeak.Web\FixALeak.Web.csproj", "{9447D218-5DAB-4CFE-BCC7-2C8FA384A42B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FixALeak.API", "FixALeak.API.\FixALeak.API.csproj", "{BD9B3AA2-D31D-4E0C-9904-3ED92A3DADBF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FixALeak.API", "FixALeak.API\FixALeak.API.csproj", "{BD9B3AA2-D31D-4E0C-9904-3ED92A3DADBF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FixALeak.ConsoleRunner", "FixALeak.ConsoleRunner\FixALeak.ConsoleRunner.csproj", "{04D62E77-3D54-4EEE-9723-8AA3A8304CEA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FixALeak.Service", "FixALeak.Service\FixALeak.Service.csproj", "{0FC5CFD6-171F-45D3-AB45-E3586B45E125}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FixALeak.Data", "FixALeak.Data\FixALeak.Data.csproj", "{D462F7E6-9DBF-47EB-AFDF-C6B4B3305C5F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FixALeak.TestApi", "FixALeak.TestApi\FixALeak.TestApi.csproj", "{824662DE-CD6E-44F9-8EF1-2CA8E48DF609}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +29,22 @@ Global
 		{BD9B3AA2-D31D-4E0C-9904-3ED92A3DADBF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BD9B3AA2-D31D-4E0C-9904-3ED92A3DADBF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BD9B3AA2-D31D-4E0C-9904-3ED92A3DADBF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{04D62E77-3D54-4EEE-9723-8AA3A8304CEA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{04D62E77-3D54-4EEE-9723-8AA3A8304CEA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{04D62E77-3D54-4EEE-9723-8AA3A8304CEA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{04D62E77-3D54-4EEE-9723-8AA3A8304CEA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0FC5CFD6-171F-45D3-AB45-E3586B45E125}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0FC5CFD6-171F-45D3-AB45-E3586B45E125}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0FC5CFD6-171F-45D3-AB45-E3586B45E125}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0FC5CFD6-171F-45D3-AB45-E3586B45E125}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D462F7E6-9DBF-47EB-AFDF-C6B4B3305C5F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D462F7E6-9DBF-47EB-AFDF-C6B4B3305C5F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D462F7E6-9DBF-47EB-AFDF-C6B4B3305C5F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D462F7E6-9DBF-47EB-AFDF-C6B4B3305C5F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{824662DE-CD6E-44F9-8EF1-2CA8E48DF609}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{824662DE-CD6E-44F9-8EF1-2CA8E48DF609}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{824662DE-CD6E-44F9-8EF1-2CA8E48DF609}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{824662DE-CD6E-44F9-8EF1-2CA8E48DF609}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

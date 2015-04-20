@@ -15,6 +15,7 @@ namespace FixALeak.API
         public void Configuration(IAppBuilder app)
         {
             HttpConfiguration config = new HttpConfiguration();
+            config.DependencyResolver = new UnityDependencyResolver.Lib.UnityWebApiDependencyResolver(UnityHelpers.GetConfiguredContainer());
             app.UseCors(Microsoft.Owin.Cors.CorsOptions.AllowAll);
             ConfigreOAuth(app);
             WebApiConfig.Register(config);

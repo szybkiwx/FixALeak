@@ -6,13 +6,13 @@ using System.Web;
 
 namespace FixALeak.API.Models
 {
-    public class Expense
+    public class ExpenseVM
     {
         public int ID { get; set; }
         public decimal Value { get; set; }
         public string Title { get; set; }
         public int CategoryID { get; set; }
         [ForeignKey("CategoryID")]
-        public virtual Category Category { get; set; }
+        public virtual CategoryVM Category { get; set; }
     }
 }

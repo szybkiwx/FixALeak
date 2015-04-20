@@ -14,9 +14,9 @@ namespace FixALeak.API.Controllers
     [RoutePrefix("api/Account")]
     public class AccountController : ApiController
     {
-        private AuthRepository _repo = null;
+        private IAuthRepository _repo = null;
 
-        public AccountController(AuthRepository repo)
+        public AccountController(IAuthRepository repo)
         {
             _repo = repo;
         }

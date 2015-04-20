@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Web;
+using FixALeak.Data.Entities;
 
-namespace FixALeak.API.Models
+namespace FixALeak.Data
 {
     public class ExpenseContext : DbContext
     {

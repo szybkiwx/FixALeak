@@ -5,7 +5,7 @@ using System.Web;
 
 namespace FixALeak.API.Models
 {
-    public class Category
+    public class CategoryVM
     {
         public int ID { get; set; }
         public string Name { get; set; }

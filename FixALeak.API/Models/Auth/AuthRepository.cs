@@ -8,13 +8,13 @@ using System.Web;
 
 namespace FixALeak.API.Models.Auth
 {
-    public class AuthRepository : IDisposable
+    public class AuthRepository : IAuthRepository
     {
         private AuthContext _ctx;
 
         private UserManager<IdentityUser> _userManager;
 
-        public AuthRepository()
+        public AuthRepository( /*UserManager<IdentityUser> userManager*/)
         {
             _ctx = new AuthContext();
             _userManager = new UserManager<IdentityUser>(new UserStore<IdentityUser>(_ctx));
