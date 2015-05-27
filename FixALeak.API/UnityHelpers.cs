@@ -5,6 +5,11 @@ using System.Linq;
 using System.Reflection;
 using System.Web;
 using FixALeak.API.Models.Auth;
+using Microsoft.AspNet.Identity.EntityFramework;
+using Microsoft.AspNet.Identity;
+using System.Data.Entity;
+using FixALeak.Service;
+using FixALeak.Data;
 
 namespace FixALeak.API
 {
@@ -24,10 +29,14 @@ namespace FixALeak.API
 
         public static void RegisterTypes(IUnityContainer container)
         {
-            container.RegisterType(typeof(Startup));
-            container.RegisterType<IAuthRepository, AuthRepository>();
-           
-
+            container.RegisterType<Startup>();
+            container.RegisterType<Microsoft.AspNet.Identity.IUser>(new InjectionFactory(c => c.Resolve<Microsoft.AspNet.Identity.IUser>()));
+            container.RegisterType(typeof(IUserStore<>), typeof(UserStore<>));
+            container.RegisterType(typeof(UserManager<>), new InjectionConstructor(typeof(IUserStore<>)));
+            container.RegisterType<DbContext, AuthContext>(new ContainerControlledLifetimeManager());
+            container.RegisterType<IExpenseContext, ExpenseContext>(new ContainerControlledLifetimeManager());
+            container.RegisterType<ICategoryService, CategoryService>();
+            container.RegisterType<ICategoryLeafService, CategoryLeafService>();
         }
 
     }

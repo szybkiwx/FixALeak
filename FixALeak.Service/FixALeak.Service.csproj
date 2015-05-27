@@ -46,7 +46,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CategoryLeafService.cs" />
     <Compile Include="CategoryService.cs" />
+    <Compile Include="ICategoryLeafService.cs" />
     <Compile Include="ICategoryService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

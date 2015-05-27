@@ -8,7 +8,7 @@ using UnityDependencyResolver.Lib;
 
 namespace FixALeak.API
 {
-  public static class Bootstrapper
+  /*public static class Bootstrapper
   {
     private static Lazy<IUnityContainer> container = new Lazy<IUnityContainer>(() =>
     {
@@ -33,5 +33,5 @@ namespace FixALeak.API
     {
       return container.Value;
     }
-  }
+  }*/
 }

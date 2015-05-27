@@ -8,11 +8,18 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
+using Microsoft.AspNet.Identity;
 
 namespace FixALeak.API
 {
     public class FixALeakAuthServerProvider : OAuthAuthorizationServerProvider
     {
+        UserManager<IdentityUser> _repo;
+
+        public FixALeakAuthServerProvider(UserManager<IdentityUser> repo)
+        {
+            _repo = repo;
+        }
         public override async Task ValidateClientAuthentication(OAuthValidateClientAuthenticationContext context)
         {
             context.Validated();
@@ -20,9 +27,7 @@ namespace FixALeak.API
 
         public override async Task GrantResourceOwnerCredentials(OAuthGrantResourceOwnerCredentialsContext context)
         {
-            using (AuthRepository repo = new AuthRepository())
-            {
-                IdentityUser user = await repo.FindUser(context.UserName, context.Password);
+            IdentityUser user = await _repo.FindAsync(context.UserName, context.Password);
 
                 if (user == null)
                 {
@@ -37,7 +42,6 @@ namespace FixALeak.API
                 identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, user.Id));
 
                 context.Validated(identity);
-            }
         }
     }
 }

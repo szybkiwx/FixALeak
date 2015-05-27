@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
+using Microsoft.AspNet.Identity.EntityFramework;
 
 
 namespace FixALeak.API.Controllers
@@ -14,9 +15,9 @@ namespace FixALeak.API.Controllers
     [RoutePrefix("api/Account")]
     public class AccountController : ApiController
     {
-        private IAuthRepository _repo = null;
+        private UserManager<IdentityUser> _repo = null;
 
-        public AccountController(IAuthRepository repo)
+        public AccountController(UserManager<IdentityUser> repo)
         {
             _repo = repo;
         }
@@ -32,7 +33,7 @@ namespace FixALeak.API.Controllers
                 return BadRequest(ModelState);
             }
 
-            IdentityResult result = await _repo.RegisterUser(userModel);
+            var result = await _repo.CreateAsync(new IdentityUser() { UserName = userModel.UserName }, userModel.Password);
 
             IHttpActionResult errorResult = GetErrorResult(result);
 
@@ -42,16 +43,6 @@ namespace FixALeak.API.Controllers
             }
 
             return Ok();
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                _repo.Dispose();
-            }
-
-            base.Dispose(disposing);
         }
 
         private IHttpActionResult GetErrorResult(IdentityResult result)

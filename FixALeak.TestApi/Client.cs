@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+
 using FixALeak.TestApi.Resources;
 using Newtonsoft.Json;
 
@@ -36,11 +37,24 @@ namespace FixALeak.TestApi
             _token = result["access_token"];
         }
 
+        public void Register(string username, string password)
+        {
+            _webClient.Headers[HttpRequestHeader.ContentType] = "application/json";
+            string data = JsonConvert.SerializeObject(
+                new UserModel() 
+                { 
+                    UserName = username,
+                    Password = password, 
+                    ConfirmPassword = password 
+                });
+            _webClient.UploadString("/api/Account", data);
+        }
+
         public List<Category> GetCategories()
         {
             _webClient.Headers[HttpRequestHeader.ContentType] = "application/json";
             _webClient.Headers[HttpRequestHeader.Authorization] = "Bearer " + _token;
-            string data = _webClient.DownloadString("/api/Category");
+            string data = _webClient.DownloadString("/api/categories?include=SubCategories");
             return null;
         }
     }

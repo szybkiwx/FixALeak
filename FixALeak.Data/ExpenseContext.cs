@@ -7,7 +7,7 @@ using FixALeak.Data.Entities;
 
 namespace FixALeak.Data
 {
-    public class ExpenseContext : DbContext
+    public class ExpenseContext : DbContext, IExpenseContext
     {
         public ExpenseContext() : base("DefaultContext")
         {
@@ -15,5 +15,17 @@ namespace FixALeak.Data
 
         public DbSet<Expense> Expenses { get; set; }
         public DbSet<Category> Categories { get; set; }
+        public DbSet<CategoryLeaf> CategoryLeafs { get; set; }
+
+        protected override void OnModelCreating(DbModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+        }
+
+
+        public new void SaveChanges()
+        {
+            base.SaveChanges();
+        }
     }
 }

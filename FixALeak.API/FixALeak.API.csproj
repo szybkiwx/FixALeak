@@ -105,6 +105,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.3\lib\net45\System.Net.Http.Formatting.dll</HintPath>
     </Reference>
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Web.Cors">
       <HintPath>..\packages\Microsoft.AspNet.Cors.5.0.0\lib\net45\System.Web.Cors.dll</HintPath>
     </Reference>
@@ -204,14 +205,11 @@
     <Compile Include="BootStrapper.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\CategoryController.cs" />
+    <Compile Include="Controllers\CategoryLeafController.cs" />
     <Compile Include="Controllers\ExpenseController.cs" />
-    <Compile Include="Controllers\OrderController.cs" />
     <Compile Include="FixALeakAuthServerProvider.cs" />
-    <Compile Include="Models\Auth\AuthRepository.cs" />
-    <Compile Include="Models\Auth\IAuthRepository.cs" />
     <Compile Include="Models\Auth\UserModel.cs" />
-    <Compile Include="Models\CategoryVM.cs" />
-    <Compile Include="Models\ExpenseVM.cs" />
+    <Compile Include="Models\JsonApiModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="UnityHelpers.cs" />
@@ -249,6 +247,10 @@
     <ProjectReference Include="..\FixALeak.Data\FixALeak.Data.csproj">
       <Project>{d462f7e6-9dbf-47eb-afdf-c6b4b3305c5f}</Project>
       <Name>FixALeak.Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FixALeak.JsonApiSerializer\FixALeak.JsonApiSerializer.csproj">
+      <Project>{e6aee942-ab0b-43ff-9d8c-a0addc6a4e06}</Project>
+      <Name>FixALeak.JsonApiSerializer</Name>
     </ProjectReference>
     <ProjectReference Include="..\FixALeak.Service\FixALeak.Service.csproj">
       <Project>{0fc5cfd6-171f-45d3-ab45-e3586b45e125}</Project>
