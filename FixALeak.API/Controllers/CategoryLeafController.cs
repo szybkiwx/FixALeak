@@ -11,7 +11,7 @@ using FixALeak.Service;
 using FixALeak.JsonApiSerializer;
 namespace FixALeak.API.Controllers
 {
-    [RoutePrefix("api/categoryleafs")]
+    [RoutePrefix("api/categoryleaves")]
     //[Authorize]
     public class CategoryLeafController : ApiController
     {
@@ -26,7 +26,7 @@ namespace FixALeak.API.Controllers
         [HttpGet]
         public IHttpActionResult Get()
         {
-            var result = new Serializer().SerializeIbjectWithRelationships(new CategoryLeaf()
+            var result = new Serializer().Serialize(new CategoryLeaf()
             {
                 ID = 1,
                 Name = "sdfsdfsdf",
