@@ -45,12 +45,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CollectionRElationshipSerializer.cs" />
     <Compile Include="IEntity.cs" />
     <Compile Include="IRelationshipSerializer.cs" />
+    <Compile Include="JsonResourceSerializeObject.cs" />
     <Compile Include="Serializer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SingleRelationShipSerializer.cs" />
+    <Compile Include="SerializerConfiguration.cs" />
+    <Compile Include="UrlBuilder.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

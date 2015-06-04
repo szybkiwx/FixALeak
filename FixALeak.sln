@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FixALeak.TestApi", "FixALea
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FixALeak.JsonApiSerializer", "FixALeak.JsonApiSerializer\FixALeak.JsonApiSerializer.csproj", "{E6AEE942-AB0B-43FF-9D8C-A0ADDC6A4E06}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FixALeak.JsonApiSerializer.Tests", "FixALeak.JsonApiSerializer.Tests\FixALeak.JsonApiSerializer.Tests.csproj", "{8BB7BD3C-73BD-407A-B00C-51453C4E28F1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,10 @@ Global
 		{E6AEE942-AB0B-43FF-9D8C-A0ADDC6A4E06}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E6AEE942-AB0B-43FF-9D8C-A0ADDC6A4E06}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E6AEE942-AB0B-43FF-9D8C-A0ADDC6A4E06}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8BB7BD3C-73BD-407A-B00C-51453C4E28F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8BB7BD3C-73BD-407A-B00C-51453C4E28F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8BB7BD3C-73BD-407A-B00C-51453C4E28F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8BB7BD3C-73BD-407A-B00C-51453C4E28F1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

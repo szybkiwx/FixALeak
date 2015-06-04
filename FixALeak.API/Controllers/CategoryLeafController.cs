@@ -26,7 +26,7 @@ namespace FixALeak.API.Controllers
         [HttpGet]
         public IHttpActionResult Get()
         {
-            var result = new Serializer().Serialize(new CategoryLeaf()
+            var result = new Serializer().Serialize(new List<CategoryLeaf>() { new CategoryLeaf()
             {
                 ID = 1,
                 Name = "sdfsdfsdf",
@@ -42,7 +42,7 @@ namespace FixALeak.API.Controllers
                         Title = "ssssssssdf"
                     }
                 }
-            });
+            }});
             return Ok(result);
         }
 

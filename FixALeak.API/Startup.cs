@@ -11,6 +11,8 @@ using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.Practices.Unity;
 using Newtonsoft.Json.Serialization;
 using System.Net.Http.Headers;
+using FixALeak.JsonApiSerializer;
+
 [assembly: OwinStartup(typeof(FixALeak.API.Startup))]
 namespace FixALeak.API
 {
@@ -22,13 +24,19 @@ namespace FixALeak.API
             config.Formatters.JsonFormatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("text/html"));
             config.DependencyResolver = new UnityDependencyResolver.Lib.UnityWebApiDependencyResolver(UnityHelpers.GetConfiguredContainer());
             app.UseCors(Microsoft.Owin.Cors.CorsOptions.AllowAll);
-            ConfigreOAuth(app);
+            ConfigureOAuth(app);
+            ConfigureSerializer();
             WebApiConfig.Register(config);
            
             app.UseWebApi(config);
         }
 
-        private void ConfigreOAuth(IAppBuilder app)
+        private void ConfigureSerializer()
+        {
+            SerializerConfiguration.Prefix = "api";
+        }
+
+        private void ConfigureOAuth(IAppBuilder app)
         {
             
             var serverOptions = new OAuthAuthorizationServerOptions()

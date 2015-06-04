@@ -14,19 +14,13 @@ namespace FixALeak.JsonApiSerializer
 {
     public class Serializer
     {
-        private static PluralizationService PluralizationService
-        {
-            get 
-            {
-                return PluralizationService.CreateService(new CultureInfo("en-US"));
-            }
-        }
-
+        
         public JObject Serialize(object obj)
         {
             JObject root = new JObject();
+            var resourceIdObject = new JsonResourceSerializeObject(obj);
             root.Add("links", JObject.FromObject( new {
-                self = PluralizationService.Pluralize(obj.GetType().Name.ToLower()) + "/" + ExtractID(obj)
+                self = resourceIdObject.GetSelfLink().ToString()
             }));
             
             var serializedObject = SerializeObject(obj);
@@ -37,13 +31,30 @@ namespace FixALeak.JsonApiSerializer
             return root;
         }
 
-        public JObject SerializeBasicData(object obj)
+        public JObject Serialize(ICollection collection)
         {
-            JObject serializedObject = new JObject();
-            Type type = obj.GetType();
-            serializedObject.Add("type", type.Name.ToLower());
-            serializedObject.Add(new JProperty("id", ExtractID(obj) /*type.GetProperty("ID").GetValue(obj)*/));
-            return serializedObject;
+            JObject root = new JObject();
+            
+            var enumerator = collection.GetEnumerator();
+            enumerator.MoveNext();
+            var resourceIdObject = new JsonResourceSerializeObject(enumerator.Current);
+
+            root.Add("links", JObject.FromObject(new
+            {
+                self = resourceIdObject.GetSelfCollectionLink().ToString()
+            }));
+
+            JArray list = new JArray();
+            foreach (var obj in collection)
+            {
+                var serializedObject = SerializeObject(obj);
+                JObject relationships = SerializeRelationships(obj);
+                serializedObject.Add(new JProperty("relationships", relationships));
+                list.Add(serializedObject);
+            }
+            root.Add("data", list);
+
+            return root;
         }
 
         private JObject SerializeSingleProperty(object obj, PropertyInfo prop)
@@ -53,26 +64,21 @@ namespace FixALeak.JsonApiSerializer
                            .ToList().Exists(a => a.GetType()
                                .IsAssignableFrom(typeof(ForeignKeyAttribute))));
 
-            string objectTypeName = obj.GetType().Name.ToLower();
+            var resourceIdObject = new JsonResourceSerializeObject(obj);
             string properyTypeName = prop.Name.Substring(0, prop.Name.Length - 2);
             string relationshipName = (relatedProp != null ? relatedProp.Name : properyTypeName).ToLower();
-
-            StringBuilder sb = new StringBuilder();
-            sb.Append( PluralizationService.Pluralize(objectTypeName));
-            sb.Append("/");
-            sb.Append(ExtractID(obj));
-            sb.Append("/");
-            sb.Append(PluralizationService.Pluralize(relationshipName));
+            
+            int id = Int32.Parse( prop.GetValue(obj).ToString());
 
             return JObject.FromObject(new
                 {
                     data = new {
-                        id = prop.GetValue(obj),
+                        id =id,
                         type = relationshipName
                     },
                     links = new  {
-                        //self = "",
-                        related = sb.ToString()
+                        self = resourceIdObject.GetRelatedSelfLink(relationshipName, id).ToString(),
+                        related = resourceIdObject.GetRelatedLink(relationshipName, id).ToString()
                     }
                 });
         }
@@ -81,34 +87,41 @@ namespace FixALeak.JsonApiSerializer
         {
             var collection = prop.GetValue(obj) as ICollection;
             JArray array = new JArray();
+            
             if (collection != null)
             {
-                foreach(var r in collection) {
-                    array.Add(JObject.FromObject(new {
-                        id = ExtractID(r) /* r.GetType().GetProperty("ID").GetValue(r)*/,
-                        type = r.GetType().Name.ToLower()
-                    }));
-                }
+                foreach (var elem in collection)
+                {
+                    array.Add(new JsonResourceSerializeObject(elem).GetJObject());
+                } 
+                //array = new JArray(collection.Select(x => new JsonResourceSerializeObject(x).GetJObject()));
             }
-            
+            var resourceIdObject = new JsonResourceSerializeObject(obj);
+            Type genericType = prop.PropertyType.GetGenericArguments()[0];
+            string relationshipName = genericType.Name.ToLower();
+
             return JObject.FromObject(new
             {
-                data = array
+                data = array,
+                links = new {
+                    self = resourceIdObject.GetRelatedSelfLink(relationshipName).ToString(),
+                    related = resourceIdObject.GetRelatedLink(relationshipName).ToString()
+                }
             });
         }
 
-        public JObject SerializeRelationships(object obj)
+        private JObject SerializeRelationships(object obj)
         {
             JObject relationships = new JObject();
             Type type = obj.GetType();
             foreach (var prop in type.GetProperties())
             {
-                string typeName = prop.Name.Substring(0, prop.Name.Length - 2);
+                string typeName = prop.Name.ToLower().Substring(0, prop.Name.Length - 2);
                 if (prop.Name.EndsWith("ID") && prop.Name.Length > 2)
                 {
                     relationships.Add(new JProperty(typeName.ToLower(), SerializeSingleProperty(obj, prop)));
                 }
-                else if (typeof(IEnumerable).IsAssignableFrom(prop.PropertyType))
+                else if (typeof(IEnumerable).IsAssignableFrom(prop.PropertyType) && prop.PropertyType != typeof(string))
                 {
                     relationships.Add(new JProperty(prop.Name.ToLower(), SerializeCollectionProperty(obj, prop)));
                 }
@@ -117,14 +130,15 @@ namespace FixALeak.JsonApiSerializer
             return relationships;
         }
 
-        public JObject SerializeObject(object obj)
+        private JObject SerializeObject(object obj)
         {
-            JObject serializedObject = SerializeBasicData(obj);
+            var resourceIdObject = new JsonResourceSerializeObject(obj);
+            JObject serializedObject = resourceIdObject.GetJObject();
             Type type = obj.GetType();
             JObject attributes = new JObject();
             foreach (var prop in type.GetProperties())
             {
-                if (!prop.Name.EndsWith("ID") && prop.GetType().IsValueType)
+                if (!prop.Name.EndsWith("ID") && (prop.PropertyType.IsValueType || prop.PropertyType == typeof(string)))
                 {
                     attributes.Add(new JProperty(prop.Name.ToLower(), prop.GetValue(obj)));
                 }
@@ -132,12 +146,6 @@ namespace FixALeak.JsonApiSerializer
 
             serializedObject.Add(new JProperty("attributes", attributes));
             return serializedObject;
-        }
-
-        
-        private int ExtractID(object obj)
-        {
-            return Int32.Parse(obj.GetType().GetProperty("ID").GetValue(obj).ToString());
         }
     }
 }
