@@ -46,8 +46,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IEntity.cs" />
+    <Compile Include="PropertySerializer\CollectionPropertySerializer.cs" />
+    <Compile Include="PropertySerializer\IPropertySerializer.cs" />
     <Compile Include="IRelationshipSerializer.cs" />
     <Compile Include="JsonResourceSerializeObject.cs" />
+    <Compile Include="PropertySerializer\KeyPropertySerializer.cs" />
+    <Compile Include="PropertySerializer\NotKeyPropertyException.cs" />
+    <Compile Include="PropertySerializer\NullSerializer.cs" />
+    <Compile Include="PropertySerializer\PropertySerializationContext.cs" />
+    <Compile Include="PropertySerializer\ValuePropertySerializer.cs" />
     <Compile Include="Serializer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SerializerConfiguration.cs" />

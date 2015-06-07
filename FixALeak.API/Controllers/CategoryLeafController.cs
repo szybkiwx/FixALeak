@@ -31,6 +31,11 @@ namespace FixALeak.API.Controllers
                 ID = 1,
                 Name = "sdfsdfsdf",
                 CategoryID = 4,
+                Category = new Category() {
+                    ID = 4,
+                    Name = "cat 1",
+                    
+                },
                 Expenses = new List<Expense>()
                 {
                     new Expense() {
