@@ -25,43 +25,39 @@ namespace FixALeak.JsonApiSerializer
 
         public JObject Serialize(object obj)
         {
-            JObject root = new JObject();
             var resourceIdObject = new JsonResourceSerializeObject(obj);
-            root.Add("links", JObject.FromObject(new
-            {
-                self = resourceIdObject.GetSelfLink().ToString()
-            }));
-
             var serializedObject = SerializeObject(obj);
             JObject relationships = SerializeRelationships(obj);
             serializedObject.Add(new JProperty("relationships", relationships));
-            root.Add("data", serializedObject);
-            return root;
+            return JObject.FromObject(new {
+                links = new
+                {
+                    self = resourceIdObject.GetSelfLink().ToString()
+                },
+                data = serializedObject
+            });
         }
 
         public JObject Serialize(ICollection collection)
         {
-            JObject root = new JObject();
-
             var enumerator = collection.GetEnumerator();
             enumerator.MoveNext();
             var resourceIdObject = new JsonResourceSerializeObject(enumerator.Current);
 
-            root.Add("links", JObject.FromObject(new
+            return JObject.FromObject(new
             {
-                self = resourceIdObject.GetSelfCollectionLink().ToString()
-            }));
-
-            JArray list = new JArray();
-            foreach (var obj in collection)
-            {
-                var serializedObject = SerializeObject(obj);
-                JObject relationships = SerializeRelationships(obj);
-                serializedObject.Add(new JProperty("relationships", relationships));
-                list.Add(serializedObject);
-            }
-            root.Add("data", list);
-            return root;
+                links = new
+                {
+                    self = resourceIdObject.GetSelfCollectionLink().ToString()
+                },
+                data = collection.Cast<object>().Select(x =>
+                    {
+                        var serializedObject = SerializeObject(x);
+                        JObject relationships = SerializeRelationships(x);
+                        serializedObject.Add(new JProperty("relationships", relationships));
+                        return serializedObject;
+                    })
+            });
         }
 
         private JObject SerializeRelationships(object obj)
@@ -81,17 +77,13 @@ namespace FixALeak.JsonApiSerializer
         {
             var resourceIdObject = new JsonResourceSerializeObject(obj);
             JObject serializedObject = resourceIdObject.GetJObject();
-            Type type = obj.GetType();
-            JObject attributes = new JObject();
-            foreach (var prop in type.GetProperties())
-            {
-                if (!prop.Name.EndsWith("ID") && (prop.PropertyType.IsValueType || prop.PropertyType == typeof(string)))
-                {
-                    attributes.Add(new JProperty(prop.Name.ToLower(), prop.GetValue(obj)));
-                }
-            }
 
-            serializedObject.Add(new JProperty("attributes", attributes));
+            var attributes = obj.GetType().GetProperties()
+                .Where(prop => !prop.Name.EndsWith("ID") && (prop.PropertyType.IsValueType || prop.PropertyType == typeof(string)))
+                .Select(prop => new JProperty(prop.Name.ToLower(), prop.GetValue(obj)));
+                
+   
+            serializedObject.Add(new JProperty("attributes", new JObject(attributes)));
             return serializedObject;
         }
     }

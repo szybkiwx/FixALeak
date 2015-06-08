@@ -18,14 +18,11 @@ namespace FixALeak.JsonApiSerializer.PropertySerializer
 
             if (collection != null)
             {
-                foreach (var elem in collection)
-                {
-                    array.Add(new JsonResourceSerializeObject(elem).GetJObject());
-                }
+                array = new JArray(collection.Cast<object>().Select(x => new JsonResourceSerializeObject(x).GetJObject()));
             }
 
             var resourceIdObject = new JsonResourceSerializeObject(obj);
-            Type genericType = prop.PropertyType.GetGenericArguments()[0];
+            Type genericType = prop.PropertyType.GetGenericArguments().First();
             string relationshipName = genericType.Name.ToLower();
 
             return new JProperty(prop.Name.ToLower(), JObject.FromObject(new
