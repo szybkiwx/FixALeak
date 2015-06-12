@@ -16,14 +16,14 @@ namespace FixALeak.JsonApiSerializer
     
     public class Serializer
     {
-        private PropertySerializationContext _propertySerializationContext;
+        private IPropertySerializationContext _propertySerializationContext;
 
-        public Serializer()
+        public Serializer(IPropertySerializationContext propertySerializationContext)
         {
-            _propertySerializationContext = new PropertySerializationContext();
+            _propertySerializationContext = propertySerializationContext;
         }
 
-        public JObject Serialize(object obj)
+        public JObject Serialize(object obj, string include)
         {
             var resourceIdObject = new JsonResourceSerializeObject(obj);
             var serializedObject = SerializeObject(obj);
@@ -38,7 +38,12 @@ namespace FixALeak.JsonApiSerializer
             });
         }
 
-        public JObject Serialize(ICollection collection)
+        public JObject Serialize(IEnumerable collection, string include)
+        {
+            return Serialize(collection.Cast<object>().ToList(), include);
+        }
+
+        public JObject Serialize(ICollection collection, string include)
         {
             var enumerator = collection.GetEnumerator();
             enumerator.MoveNext();
@@ -82,7 +87,6 @@ namespace FixALeak.JsonApiSerializer
                 .Where(prop => !prop.Name.EndsWith("ID") && (prop.PropertyType.IsValueType || prop.PropertyType == typeof(string)))
                 .Select(prop => new JProperty(prop.Name.ToLower(), prop.GetValue(obj)));
                 
-   
             serializedObject.Add(new JProperty("attributes", new JObject(attributes)));
             return serializedObject;
         }

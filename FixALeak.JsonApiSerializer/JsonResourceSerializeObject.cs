@@ -23,7 +23,14 @@ namespace FixALeak.JsonApiSerializer
         {
             get
             {
-                return _val.GetType().Name.ToLower();
+                Type type = _val.GetType();
+                string name = type.Name.ToLower();
+                if (type.Namespace == "System.Data.Entity.DynamicProxies")
+                {
+                    return name.Split('_')[0];
+                }
+
+                return name;
             }
         }
 
