@@ -14,11 +14,7 @@ namespace FixALeak.JsonApiSerializer.PropertySerializer
     {
         public JProperty Serialize(object obj, PropertyInfo prop)
         {
-            var relatedProp = obj.GetType().GetProperties()
-                       .SingleOrDefault(p => p.GetCustomAttributes(true)
-                           .ToList().Exists(a => a.GetType()
-                               .IsAssignableFrom(typeof(ForeignKeyAttribute))));
-
+            var relatedProp = GetRelated(obj);
             if (relatedProp == null)
             {
                 return null;
@@ -43,6 +39,21 @@ namespace FixALeak.JsonApiSerializer.PropertySerializer
                     related = resourceIdObject.GetRelatedLink(relationshipName, id).ToString()
                 }
             }));
+        }
+
+        private PropertyInfo GetRelated(object obj)
+        {
+            return  obj.GetType().GetProperties()
+                       .SingleOrDefault(p => p.GetCustomAttributes(true)
+                           .ToList().Exists(a => a.GetType()
+                               .IsAssignableFrom(typeof(ForeignKeyAttribute))));
+
+        }
+
+
+        public IEnumerable<JObject> SerializeFull(object obj, PropertyInfo prop)
+        {
+            throw new NotImplementedException();
         }
     }
 }

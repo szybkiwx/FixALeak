@@ -13,37 +13,41 @@ using System.Globalization;
 using FixALeak.JsonApiSerializer.PropertySerializer;
 namespace FixALeak.JsonApiSerializer
 {
-    
+
     public class Serializer
     {
         private IPropertySerializationContext _propertySerializationContext;
+        private ISingleObjectSerializer _singleObjectSerializer;
 
-        public Serializer(IPropertySerializationContext propertySerializationContext)
+        public Serializer(IPropertySerializationContext propertySerializationContext, ISingleObjectSerializer singleObjectSerializer)
         {
             _propertySerializationContext = propertySerializationContext;
+            _singleObjectSerializer = singleObjectSerializer;
         }
 
-        public JObject Serialize(object obj, string include)
+        public JObject Serialize(object obj, string include = "")
         {
             var resourceIdObject = new JsonResourceSerializeObject(obj);
-            var serializedObject = SerializeObject(obj);
+            var serializedObject = _singleObjectSerializer.Serialize(obj);
             JObject relationships = SerializeRelationships(obj);
             serializedObject.Add(new JProperty("relationships", relationships));
-            return JObject.FromObject(new {
+            return JObject.FromObject(new
+            {
                 links = new
                 {
                     self = resourceIdObject.GetSelfLink().ToString()
                 },
-                data = serializedObject
+                data = serializedObject,
+                included = GetIncludes(obj, include)
             });
         }
 
-        public JObject Serialize(IEnumerable collection, string include)
+        public JObject Serialize(IEnumerable collection, string include = "")
         {
             return Serialize(collection.Cast<object>().ToList(), include);
         }
 
-        public JObject Serialize(ICollection collection, string include)
+        public JObject Serialize(ICollection collection, string include = "")
         {
             var enumerator = collection.GetEnumerator();
             enumerator.MoveNext();
@@ -57,12 +61,21 @@ namespace FixALeak.JsonApiSerializer
                 },
                 data = collection.Cast<object>().Select(x =>
                     {
-                        var serializedObject = SerializeObject(x);
+                        var serializedObject = _singleObjectSerializer.Serialize(x);
                         JObject relationships = SerializeRelationships(x);
                         serializedObject.Add(new JProperty("relationships", relationships));
                         return serializedObject;
-                    })
+                    }),
+                included = collection.Cast<object>()
+                                .Select(x => GetIncludes(x, include))
+                                .Aggregate((aggregate, current) => aggregate.Union(current))
             });
+        }
+
+        public T Deserialize<T>(string json)
+        {
+
+            return default(T);
         }
 
         private JObject SerializeRelationships(object obj)
@@ -74,21 +87,31 @@ namespace FixALeak.JsonApiSerializer
                 .Where(x => x != null)
                 .GroupBy(x => x.Name)
                 .Select(g => g.First());
-                
+
             return new JObject(serializedCollection);
         }
 
-        private JObject SerializeObject(object obj)
+        private IEnumerable<JObject> GetIncludes(object obj, string include)
         {
-            var resourceIdObject = new JsonResourceSerializeObject(obj);
-            JObject serializedObject = resourceIdObject.GetJObject();
+            {
+                var includes = new List<JObject>();
+                include.Split(',').ToList().ForEach(x =>
+                {
+                    obj.GetType()
+                        .GetProperties()
+                        .Where(prop => prop.Name.ToLower() == x)
+                        .ToList()
+                        .ForEach(prop =>
+                        {
+                             includes.AddRange(_propertySerializationContext.SerializeFull(obj, prop));
+                            
+                        });
+                });
 
-            var attributes = obj.GetType().GetProperties()
-                .Where(prop => !prop.Name.EndsWith("ID") && (prop.PropertyType.IsValueType || prop.PropertyType == typeof(string)))
-                .Select(prop => new JProperty(prop.Name.ToLower(), prop.GetValue(obj)));
-                
-            serializedObject.Add(new JProperty("attributes", new JObject(attributes)));
-            return serializedObject;
+                return includes;
+            }
         }
+
+  
     }
 }

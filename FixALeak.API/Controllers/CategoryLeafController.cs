@@ -26,29 +26,8 @@ namespace FixALeak.API.Controllers
         [HttpGet]
         public IHttpActionResult Get()
         {
-            var result = SerializerBuilder.Create().Serialize(new List<CategoryLeaf>() { new CategoryLeaf()
-            {
-                ID = 1,
-                Name = "sdfsdfsdf",
-                CategoryID = 4,
-                Category = new Category() {
-                    ID = 4,
-                    Name = "cat 1",
-                    
-                },
-                Expenses = new List<Expense>()
-                {
-                    new Expense() {
-                        ID = 1,
-                        Title = "sdfsdf"
-                    },
-                    new Expense() {
-                        ID = 2,
-                        Title = "ssssssssdf"
-                    }
-                }
-            }});
-            return Ok(result);
+            
+            return Ok();
         }
 
         [Route("")]

@@ -34,6 +34,11 @@ namespace FixALeak.JsonApiSerializer.PropertySerializer
         public JProperty Serialize(object obj, PropertyInfo prop)
         {
             return _strategies.FirstOrDefault(x => x.Key.Invoke(prop, obj)).Value.Serialize(obj, prop);
-        } 
+        }
+
+        IEnumerable<JObject> IPropertySerializationContext.SerializeFull(object obj, PropertyInfo prop)
+        {
+            return _strategies.FirstOrDefault(x => x.Key.Invoke(prop, obj)).Value.SerializeFull(obj, prop);
+        }
     }
 }

@@ -11,6 +11,14 @@ namespace FixALeak.JsonApiSerializer.PropertySerializer
 {
     public class CollectionPropertySerializer : IPropertySerializer
     {
+        private ISingleObjectSerializer _singleObjectSerializer;
+
+        public CollectionPropertySerializer(ISingleObjectSerializer singleObjectSerializer)
+        {
+            _singleObjectSerializer = singleObjectSerializer;
+        }
+
+
         public JProperty Serialize(object obj, PropertyInfo prop)
         {
             JArray array;
@@ -41,6 +49,42 @@ namespace FixALeak.JsonApiSerializer.PropertySerializer
                     related = resourceIdObject.GetRelatedLink(relationshipName).ToString()
                 }
             }));
+        }
+
+
+        public IEnumerable<JObject> SerializeFull(object obj, PropertyInfo prop)
+        {
+            IEnumerable<JObject> result;
+            if (prop.PropertyType.GetInterface("ICollection") != null)
+            {
+                var collection = prop.GetValue(obj) as ICollection;
+                result = collection.Cast<object>().Select(x => _singleObjectSerializer.Serialize(x));
+            }
+            else if (prop.PropertyType.GetInterface("IEnumerable") != null)
+            {
+                var collection = prop.GetValue(obj) as IEnumerable;
+                result = collection.Cast<object>().Select(x => _singleObjectSerializer.Serialize(x));
+            }
+            else
+            {
+                result = new List<JObject>();
+            }
+
+            return result;
+
+            /*var resourceIdObject = new JsonResourceSerializeObject(obj);
+            Type genericType = prop.PropertyType.GetGenericArguments().First();
+            string relationshipName = genericType.Name.ToLower();
+
+            return JObject.FromObject(new
+            {
+                data = array,
+                links = new
+                {
+                    self = resourceIdObject.GetRelatedSelfLink(relationshipName).ToString(),
+                  
+                }
+            });*/
         }
     }
 }

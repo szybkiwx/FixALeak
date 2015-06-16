@@ -10,6 +10,7 @@ using Microsoft.AspNet.Identity;
 using System.Data.Entity;
 using FixALeak.Service;
 using FixALeak.Data;
+using FixALeak.JsonApiSerializer;
 
 namespace FixALeak.API
 {
@@ -37,6 +38,7 @@ namespace FixALeak.API
             container.RegisterType<IExpenseContext, ExpenseContext>(new ContainerControlledLifetimeManager());
             container.RegisterType<ICategoryService, CategoryService>();
             container.RegisterType<ICategoryLeafService, CategoryLeafService>();
+            container.RegisterType<ISingleObjectSerializer, SingleObjectSerializer>();
         }
 
     }

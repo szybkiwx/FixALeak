@@ -54,7 +54,7 @@ namespace FixALeak.TestApi
         {
             _webClient.Headers[HttpRequestHeader.ContentType] = "application/json";
             _webClient.Headers[HttpRequestHeader.Authorization] = "Bearer " + _token;
-            string data = _webClient.DownloadString("/api/categories?include=SubCategories");
+            string data = _webClient.DownloadString("/api/categories?include=subcategories");
             return null;
         }
     }

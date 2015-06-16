@@ -10,6 +10,12 @@ namespace FixALeak.JsonApiSerializer.PropertySerializer
 {
     public class ValuePropertySerializer : IPropertySerializer
     {
+        private ISingleObjectSerializer _singleObjectSerializer;
+
+        public ValuePropertySerializer(ISingleObjectSerializer singleObjectSerializer)
+        {
+            _singleObjectSerializer = singleObjectSerializer;
+        }
         public JProperty Serialize(object obj, PropertyInfo prop)
         {
             var resourceIdObject = new JsonResourceSerializeObject(obj);
@@ -28,5 +34,11 @@ namespace FixALeak.JsonApiSerializer.PropertySerializer
                 }
             }));
         }
+
+        public IEnumerable<JObject> SerializeFull(object obj, PropertyInfo prop)
+        {
+            return new List<JObject>() { _singleObjectSerializer.Serialize(prop.GetValue(obj)) };
+        }
+
     }
 }

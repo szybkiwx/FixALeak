@@ -32,6 +32,7 @@ namespace FixALeak.JsonApiSerializer
             container.RegisterType<NullSerializer>();
             container.RegisterType<PropertySerializerAggregate>();
             container.RegisterType<IPropertySerializationContext, PropertySerializationContext>();
+            container.RegisterType<ISingleObjectSerializer, SingleObjectSerializer>(); 
         }
     }
 }
