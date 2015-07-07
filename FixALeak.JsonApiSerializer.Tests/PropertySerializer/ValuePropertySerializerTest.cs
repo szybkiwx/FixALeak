@@ -20,7 +20,7 @@ namespace FixALeak.JsonApiSerializer.Tests.PropertySerializer
         }
 
         [TestMethod]
-        public void Serialize_When_Given_Valid_Object_Should_Resturn_Serialized()
+        public void Serialize_Value_When_Given_Valid_Object_Should_Resturn_Serialized()
         {
             var obj = new MainObject()
             {

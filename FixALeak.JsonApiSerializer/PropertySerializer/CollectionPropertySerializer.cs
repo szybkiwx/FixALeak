@@ -22,13 +22,14 @@ namespace FixALeak.JsonApiSerializer.PropertySerializer
         public JProperty Serialize(object obj, PropertyInfo prop)
         {
             JArray array;
-            if(prop.PropertyType.GetInterface("ICollection") != null) {
+            if (prop.PropertyType.GetInterface("ICollection") != null)
+            {
                 var collection = prop.GetValue(obj) as ICollection;
-                array = new JArray(collection.Cast<object>().Select(x => new JsonResourceSerializeObject(x).GetJObject()));
+                array = new JArray(collection.Cast<object>().Select(x => new ResourceObject(x).GetJObject()));
             }
             else if(prop.PropertyType.GetInterface("IEnumerable") != null) {
                 var collection = prop.GetValue(obj) as IEnumerable;
-                array = new JArray(collection.Cast<object>().Select(x => new JsonResourceSerializeObject(x).GetJObject()));
+                array = new JArray(collection.Cast<object>().Select(x => new ResourceObject(x).GetJObject()));
             }
             else
             {
@@ -36,7 +37,7 @@ namespace FixALeak.JsonApiSerializer.PropertySerializer
             }
             
        
-            var resourceIdObject = new JsonResourceSerializeObject(obj);
+            var resourceIdObject = new ResourceObject(obj);
             Type genericType = prop.PropertyType.GetGenericArguments().First();
             string relationshipName = genericType.Name.ToLower();
 
@@ -59,6 +60,7 @@ namespace FixALeak.JsonApiSerializer.PropertySerializer
             {
                 var collection = prop.GetValue(obj) as ICollection;
                 result = collection.Cast<object>().Select(x => _singleObjectSerializer.Serialize(x));
+                //result = prop.GetValue(obj).Cast<object>().Select(x => _singleObjectSerializer.Serialize(x));
             }
             else if (prop.PropertyType.GetInterface("IEnumerable") != null)
             {
@@ -71,20 +73,6 @@ namespace FixALeak.JsonApiSerializer.PropertySerializer
             }
 
             return result;
-
-            /*var resourceIdObject = new JsonResourceSerializeObject(obj);
-            Type genericType = prop.PropertyType.GetGenericArguments().First();
-            string relationshipName = genericType.Name.ToLower();
-
-            return JObject.FromObject(new
-            {
-                data = array,
-                links = new
-                {
-                    self = resourceIdObject.GetRelatedSelfLink(relationshipName).ToString(),
-                  
-                }
-            });*/
         }
     }
 }

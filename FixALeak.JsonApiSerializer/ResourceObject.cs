@@ -7,7 +7,7 @@ using Newtonsoft.Json.Linq;
 
 namespace FixALeak.JsonApiSerializer
 {
-    public class JsonResourceSerializeObject
+    public class ResourceObject
     {
         private object _val;
 
@@ -31,6 +31,14 @@ namespace FixALeak.JsonApiSerializer
                 }
 
                 return name;
+            }
+        }
+
+        public object Value
+        {
+            get
+            {
+                return _val;
             }
         }
 
@@ -73,9 +81,25 @@ namespace FixALeak.JsonApiSerializer
             return UrlBuilder.Initialize().Resource(TypeName);
         }
 
-        public JsonResourceSerializeObject(object val)
+        public ResourceObject(object val)
         {
             _val = val;
+        }
+
+        public ResourceObject(JObject rootNode)
+        {
+            var typeNode = rootNode["type"];
+            var id = int.Parse(rootNode["id"].ToString());
+            var resourceType = AppDomain.CurrentDomain.GetAssemblies()
+                .SelectMany(assembly => assembly.GetTypes())
+                .Where(t => t.Name.ToLower() == typeNode.ToString())
+                .SingleOrDefault();
+            var instance = Activator.CreateInstance(resourceType);
+            if (id != null)
+            {
+                resourceType.GetProperty("ID").SetValue(instance, int.Parse(id.ToString()));
+            }
+            _val = instance;
         }
     }
 }

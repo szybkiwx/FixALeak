@@ -13,7 +13,6 @@ using System.Globalization;
 using FixALeak.JsonApiSerializer.PropertySerializer;
 namespace FixALeak.JsonApiSerializer
 {
-
     public class Serializer
     {
         private IPropertySerializationContext _propertySerializationContext;
@@ -27,7 +26,7 @@ namespace FixALeak.JsonApiSerializer
 
         public JObject Serialize(object obj, string include = "")
         {
-            var resourceIdObject = new JsonResourceSerializeObject(obj);
+            var resourceIdObject = new ResourceObject(obj);
             var serializedObject = _singleObjectSerializer.Serialize(obj);
             JObject relationships = SerializeRelationships(obj);
             serializedObject.Add(new JProperty("relationships", relationships));
@@ -51,7 +50,7 @@ namespace FixALeak.JsonApiSerializer
         {
             var enumerator = collection.GetEnumerator();
             enumerator.MoveNext();
-            var resourceIdObject = new JsonResourceSerializeObject(enumerator.Current);
+            var resourceIdObject = new ResourceObject(enumerator.Current);
 
             return JObject.FromObject(new
             {
@@ -74,6 +73,75 @@ namespace FixALeak.JsonApiSerializer
 
         public T Deserialize<T>(string json)
         {
+            
+            var rootNode = JObject.Parse(json);
+            var dataNode = rootNode["data"];
+            var typeNode = dataNode["type"];
+            var id = dataNode["id"];
+          
+            var resourceType = AppDomain.CurrentDomain.GetAssemblies()
+                .SelectMany(assembly => assembly.GetTypes())
+                .Where(t => t.Name.ToLower() == typeNode.ToString())
+                .SingleOrDefault();
+            var instance = Activator.CreateInstance(resourceType);
+            if (id != null)
+            {
+                resourceType.GetProperty("ID").SetValue(instance, int.Parse(id.ToString()));
+            }
+
+            var attributes = dataNode["attributes"];
+            if (attributes != null)
+            {
+                resourceType.GetProperties().ToList().ForEach(prop =>
+                {
+                    string propName = prop.Name.ToLower();
+                    if (attributes[propName] != null)
+                    {
+                        prop.SetValue(instance, Convert.ChangeType(attributes[propName].ToString(), prop.PropertyType));
+                    }
+                });
+            }
+           
+
+            var relationships = dataNode["relationships"].AsEnumerable();
+
+            if (relationships != null)
+            {
+                resourceType.GetProperties().ToList().ForEach(prop =>
+                {
+                    string propName = prop.Name.ToLower();
+                    foreach(var rel in relationships.Cast<JProperty>())
+                    {
+                        if (rel.Name == propName)
+                        {
+                            if (rel.Value["data"] is JArray)
+                            {
+                                foreach (var obj in rel.Value["data"])
+                                {
+                                    
+                                }
+                            }
+                            else
+                            {
+
+                            }
+                        }
+                    };
+                    
+                   /* string propName = prop.Name.ToLower();
+                    if (attributes[propName] != null)
+                    {
+                        prop.SetValue(instance, Convert.ChangeType(attributes[propName].ToString(), prop.PropertyType));
+                    }*/
+                });
+            }
+
+            /*foreach (var rel in relationships)
+            {
+                //var relationShipDataNode = rel["data"];
+                
+                //var relType = relationShipDataNode[]
+            }*/
 
             return default(T);
         }

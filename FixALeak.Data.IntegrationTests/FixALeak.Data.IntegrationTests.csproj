@@ -3,11 +3,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{8BB7BD3C-73BD-407A-B00C-51453C4E28F1}</ProjectGuid>
+    <ProjectGuid>{A8BE90AD-0ADC-4B9C-917E-979C4955EF21}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>FixALeak.JsonApiSerializer.Tests</RootNamespace>
-    <AssemblyName>FixALeak.JsonApiSerializer.Tests</AssemblyName>
+    <RootNamespace>FixALeak.Data.IntegrationTests</RootNamespace>
+    <AssemblyName>FixALeak.Data.IntegrationTests</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -35,14 +35,14 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Moq">
-      <HintPath>..\packages\Moq.4.2.1502.0911\lib\net40\Moq.dll</HintPath>
+    <Reference Include="EntityFramework">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="EntityFramework.SqlServer">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
   </ItemGroup>
   <Choose>
     <When Condition="('$(VisualStudioVersion)' == '10.0' or '$(VisualStudioVersion)' == '') and '$(TargetFrameworkVersion)' == 'v3.5'">
@@ -57,26 +57,18 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="DeserializerTestObject.cs" />
-    <Compile Include="ResourceObjectTest.cs" />
+    <Compile Include="EFTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="PropertySerializer\CollectionPropertySerializerTest.cs" />
-    <Compile Include="PropertySerializer\MainObject.cs" />
-    <Compile Include="PropertySerializer\ValuePropertySerializerTest.cs" />
-    <Compile Include="DeserializerTest.cs" />
-    <Compile Include="UrlBuilderTest.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\FixALeak.JsonApiSerializer\FixALeak.JsonApiSerializer.csproj">
-      <Project>{e6aee942-ab0b-43ff-9d8c-a0addc6a4e06}</Project>
-      <Name>FixALeak.JsonApiSerializer</Name>
+    <ProjectReference Include="..\FixALeak.Data\FixALeak.Data.csproj">
+      <Project>{d462f7e6-9dbf-47eb-afdf-c6b4b3305c5f}</Project>
+      <Name>FixALeak.Data</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Integration\" />
+    <None Include="App.config" />
+    <None Include="packages.config" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

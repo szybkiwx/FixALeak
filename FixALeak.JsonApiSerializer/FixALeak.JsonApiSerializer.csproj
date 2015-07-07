@@ -60,7 +60,7 @@
     <Compile Include="PropertySerializer\IPropertySerializationContext.cs" />
     <Compile Include="PropertySerializer\IPropertySerializer.cs" />
     <Compile Include="IRelationshipSerializer.cs" />
-    <Compile Include="JsonResourceSerializeObject.cs" />
+    <Compile Include="ResourceObject.cs" />
     <Compile Include="PropertySerializer\KeyPropertySerializer.cs" />
     <Compile Include="PropertySerializer\NotKeyPropertyException.cs" />
     <Compile Include="PropertySerializer\NullSerializer.cs" />

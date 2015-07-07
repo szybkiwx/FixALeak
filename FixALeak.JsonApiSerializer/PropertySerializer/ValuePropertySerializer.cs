@@ -18,8 +18,8 @@ namespace FixALeak.JsonApiSerializer.PropertySerializer
         }
         public JProperty Serialize(object obj, PropertyInfo prop)
         {
-            var resourceIdObject = new JsonResourceSerializeObject(obj);
-            var relatedIdObject = new JsonResourceSerializeObject(prop.GetValue(obj));
+            var resourceIdObject = new ResourceObject(obj);
+            var relatedIdObject = new ResourceObject(prop.GetValue(obj));
             return new JProperty(prop.Name.ToLower(), JObject.FromObject(new
             {
                 data = new
