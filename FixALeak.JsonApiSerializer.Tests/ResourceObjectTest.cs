@@ -13,14 +13,14 @@ namespace FixALeak.JsonApiSerializer.Tests
     [TestClass]
     public class ResourceObjectTest
     {
-        private ResourceObject sut;
+        private InResourceObject sut;
 
         [TestInitialize]
         public void SetUp()
         {
             var entity = new TestEntity();
             entity.ID = 12;
-            sut = new ResourceObject(entity);
+            sut = new InResourceObject(entity);
         }
 
         [TestMethod]

@@ -40,11 +40,52 @@ namespace FixALeak.JsonApiSerializer.Tests
                         { ""type"": ""deserializertestrelatedobject"", ""id"": 20 },
                         { ""type"": ""deserializertestrelatedobject"", ""id"": 21 }
                     ]
+                  },
+                  ""descollection2"": {
+                    ""data"": [
+                        { ""type"": ""deserializertestrelatedobject"", ""id"": 20 },
+                        { ""type"": ""deserializertestrelatedobject"", ""id"": 21 }
+                    ]
+                  },
+                  ""descollection3"": {
+                    ""data"": [
+                        { ""type"": ""deserializertestrelatedobject"", ""id"": 20 },
+                        { ""type"": ""deserializertestrelatedobject"", ""id"": 21 }
+                    ]
                   }
                 }
               }
             }";
+
+            var coll = new List<DeserializerTestRelatedObject>()
+                {
+                    new DeserializerTestRelatedObject()
+                    {
+                        ID=20
+                    },
+                    new DeserializerTestRelatedObject()
+                    {
+                        ID=21
+                    }
+                };
+
+            var expected = new DeserializerTestObject()
+            {
+                Title = "Ember Hamster",
+                Src = "http://example.com/images/productivity.png",
+                SomeFloat = 4.5f,
+                SomeDecimal = 4.5m,
+                SomeDouble = 4.5d,
+                Des = new DeserializerTestRelatedObject()
+                {
+                    ID = 9
+                },
+                DesCollection = coll,
+                DesCollection2 = coll,
+                DesCollection3 = coll
+            };
             var result = sut.Deserialize<DeserializerTestObject>(value);
+            Assert.AreEqual(expected, result);
         }
     }
 }

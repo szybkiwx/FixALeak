@@ -11,7 +11,7 @@ namespace FixALeak.JsonApiSerializer
     {
         public JObject Serialize(object obj)
         {
-            var resourceIdObject = new ResourceObject(obj);
+            var resourceIdObject = new InResourceObject(obj);
             JObject serializedObject = resourceIdObject.GetJObject();
 
             var attributes = obj.GetType().GetProperties()

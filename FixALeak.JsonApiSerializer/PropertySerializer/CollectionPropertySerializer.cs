@@ -25,11 +25,11 @@ namespace FixALeak.JsonApiSerializer.PropertySerializer
             if (prop.PropertyType.GetInterface("ICollection") != null)
             {
                 var collection = prop.GetValue(obj) as ICollection;
-                array = new JArray(collection.Cast<object>().Select(x => new ResourceObject(x).GetJObject()));
+                array = new JArray(collection.Cast<object>().Select(x => new InResourceObject(x).GetJObject()));
             }
             else if(prop.PropertyType.GetInterface("IEnumerable") != null) {
                 var collection = prop.GetValue(obj) as IEnumerable;
-                array = new JArray(collection.Cast<object>().Select(x => new ResourceObject(x).GetJObject()));
+                array = new JArray(collection.Cast<object>().Select(x => new InResourceObject(x).GetJObject()));
             }
             else
             {
@@ -37,7 +37,7 @@ namespace FixALeak.JsonApiSerializer.PropertySerializer
             }
             
        
-            var resourceIdObject = new ResourceObject(obj);
+            var resourceIdObject = new InResourceObject(obj);
             Type genericType = prop.PropertyType.GetGenericArguments().First();
             string relationshipName = genericType.Name.ToLower();
 

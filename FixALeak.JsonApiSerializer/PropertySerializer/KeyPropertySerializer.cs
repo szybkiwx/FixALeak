@@ -20,7 +20,7 @@ namespace FixALeak.JsonApiSerializer.PropertySerializer
                 return null;
             }
 
-            var resourceIdObject = new ResourceObject(obj);
+            var resourceIdObject = new InResourceObject(obj);
             string properyTypeName = prop.Name.Substring(0, prop.Name.Length - 2);
             string relationshipName = (relatedProp != null ? relatedProp.Name : properyTypeName).ToLower();
 

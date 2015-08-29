@@ -7,15 +7,23 @@ using Newtonsoft.Json.Linq;
 
 namespace FixALeak.JsonApiSerializer
 {
-    public class ResourceObject
+    public class InResourceObject
     {
         private object _val;
+
+        int? _id;
+        string _typeName;
 
         public int ID
         {
             get
             {
-                return Int32.Parse(_val.GetType().GetProperty("ID").GetValue(_val).ToString());
+                if (_id == null)
+                {
+                    _id = Int32.Parse(_val.GetType().GetProperty("ID").GetValue(_val).ToString());
+                }
+
+                return _id.Value;
             }
         }
 
@@ -23,14 +31,17 @@ namespace FixALeak.JsonApiSerializer
         {
             get
             {
-                Type type = _val.GetType();
-                string name = type.Name.ToLower();
-                if (type.Namespace == "System.Data.Entity.DynamicProxies")
+                if(string.IsNullOrWhiteSpace(_typeName))
                 {
-                    return name.Split('_')[0];
+                    Type type = _val.GetType();
+                    _typeName = type.Name.ToLower();
+                    if (type.Namespace == "System.Data.Entity.DynamicProxies")
+                    {
+                        _typeName = _typeName.Split('_')[0];
+                    }
                 }
 
-                return name;
+                return _typeName;
             }
         }
 
@@ -81,25 +92,9 @@ namespace FixALeak.JsonApiSerializer
             return UrlBuilder.Initialize().Resource(TypeName);
         }
 
-        public ResourceObject(object val)
+        public InResourceObject(object val)
         {
             _val = val;
-        }
-
-        public ResourceObject(JObject rootNode)
-        {
-            var typeNode = rootNode["type"];
-            var id = int.Parse(rootNode["id"].ToString());
-            var resourceType = AppDomain.CurrentDomain.GetAssemblies()
-                .SelectMany(assembly => assembly.GetTypes())
-                .Where(t => t.Name.ToLower() == typeNode.ToString())
-                .SingleOrDefault();
-            var instance = Activator.CreateInstance(resourceType);
-            if (id != null)
-            {
-                resourceType.GetProperty("ID").SetValue(instance, int.Parse(id.ToString()));
-            }
-            _val = instance;
         }
     }
 }
