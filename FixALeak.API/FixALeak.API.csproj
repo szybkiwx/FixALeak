@@ -19,6 +19,7 @@
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
+    <UseGlobalApplicationHostFile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -207,9 +208,13 @@
     <Compile Include="Controllers\CategoryController.cs" />
     <Compile Include="Controllers\CategoryLeafController.cs" />
     <Compile Include="Controllers\ExpenseController.cs" />
+    <Compile Include="Filters\JsonReaderExceptionFilter.cs" />
     <Compile Include="FixALeakAuthServerProvider.cs" />
     <Compile Include="Models\Auth\UserModel.cs" />
+    <Compile Include="Extensions\CurrentUser.cs" />
+    <Compile Include="Models\IPrincipalModelBinder.cs" />
     <Compile Include="Models\JsonApiModel.cs" />
+    <Compile Include="Models\JsonApiModelBInder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="UnityHelpers.cs" />

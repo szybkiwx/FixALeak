@@ -19,7 +19,7 @@ namespace FixALeak.JsonApiSerializer.Tests
         }
 
         [TestMethod]
-        public void Serializer_Deserialize()
+        public void Deserializer_Deserialize()
         {
             string value = @"{
               ""data"": {
@@ -87,5 +87,6 @@ namespace FixALeak.JsonApiSerializer.Tests
             var result = sut.Deserialize<DeserializerTestObject>(value);
             Assert.AreEqual(expected, result);
         }
+
     }
 }

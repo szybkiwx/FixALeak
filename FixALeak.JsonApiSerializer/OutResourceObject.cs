@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
+using System.IO;
 
 namespace FixALeak.JsonApiSerializer
 {
@@ -14,14 +15,23 @@ namespace FixALeak.JsonApiSerializer
         public Type ObjectType { get; private set;}
         
         public object Instance { get; private set; }
-                
+
         public OutResourceObject(JToken rootNode)
         {
             var typeNode = rootNode["type"];
-            ObjectType = AppDomain.CurrentDomain.GetAssemblies()
-                .SelectMany(assembly => assembly.GetTypes())
-                .Where(t => t.Name.ToLower() == typeNode.ToString())
-                .SingleOrDefault();
+
+            var types = AppDomain.CurrentDomain.GetAssemblies().SelectMany(assembly => {
+                try {
+                    return assembly.GetTypes();
+                }
+                catch (FileNotFoundException e) {
+                    //LOGGER
+                    return new Type[0];
+                }
+            });
+
+            ObjectType = types.Where(t => t.Name.ToLower() == typeNode.ToString()).SingleOrDefault();
+
             Instance = Convert.ChangeType(Activator.CreateInstance(ObjectType), ObjectType);
             if (rootNode["id"] != null)
             {

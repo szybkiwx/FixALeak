@@ -23,6 +23,8 @@ namespace FixALeak.TestApi
             };
         }
 
+       
+
         public void Authorize(string username, string password) {
             _webClient.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
             var authBody = new NameValueCollection();
@@ -56,6 +58,27 @@ namespace FixALeak.TestApi
             _webClient.Headers[HttpRequestHeader.Authorization] = "Bearer " + _token;
             string data = _webClient.DownloadString("/api/categories?include=subcategories");
             return null;
+        }
+
+
+
+        public void AddCategory()
+        {
+            _webClient.Headers[HttpRequestHeader.ContentType] = "application/vnd.api+json";
+            _webClient.Headers[HttpRequestHeader.Authorization] = "Bearer " + _token;
+
+            string newCategoryJson = @"
+               {
+                    ""data"": {
+                        ""type"": ""category"",
+                        ""attributes"": {
+                            ""name"": ""test upload""
+                        }
+                    }
+                }
+            ";
+
+            _webClient.UploadString("/api/categories", newCategoryJson); 
         }
     }
 }

@@ -21,11 +21,10 @@ namespace FixALeak.JsonApiSerializer
         {
             return container.Value.Resolve<Serializer>();
         }
-        
+
         private static void RegisterTypes(UnityContainer container)
         {
             container.RegisterType<Serializer>();
-            
             container.RegisterType<KeyPropertySerializer>();
             container.RegisterType<ValuePropertySerializer>();
             container.RegisterType<CollectionPropertySerializer>();

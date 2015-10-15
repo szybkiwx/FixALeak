@@ -11,6 +11,8 @@ using System.Data.Entity;
 using FixALeak.Service;
 using FixALeak.Data;
 using FixALeak.JsonApiSerializer;
+using FixALeak.API.Models;
+using System.Security.Principal;
 
 namespace FixALeak.API
 {
@@ -31,7 +33,7 @@ namespace FixALeak.API
         public static void RegisterTypes(IUnityContainer container)
         {
             container.RegisterType<Startup>();
-            container.RegisterType<Microsoft.AspNet.Identity.IUser>(new InjectionFactory(c => c.Resolve<Microsoft.AspNet.Identity.IUser>()));
+            container.RegisterType<IUser>(new InjectionFactory(c => c.Resolve<IUser>()));
             container.RegisterType(typeof(IUserStore<>), typeof(UserStore<>));
             container.RegisterType(typeof(UserManager<>), new InjectionConstructor(typeof(IUserStore<>)));
             container.RegisterType<DbContext, AuthContext>(new ContainerControlledLifetimeManager());
@@ -39,6 +41,7 @@ namespace FixALeak.API
             container.RegisterType<ICategoryService, CategoryService>();
             container.RegisterType<ICategoryLeafService, CategoryLeafService>();
             container.RegisterType<ISingleObjectSerializer, SingleObjectSerializer>();
+
         }
 
     }

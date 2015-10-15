@@ -11,6 +11,10 @@ using Microsoft.AspNet.Identity;
 using AutoMapper;
 using FixALeak.Data.Entities;
 using FixALeak.JsonApiSerializer;
+using FixALeak.API.Extensions;
+using System.Security.Principal;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
 
 namespace FixALeak.API.Controllers
 {
@@ -27,13 +31,12 @@ namespace FixALeak.API.Controllers
 
         [Route("")]
         [HttpGet]
-        public IHttpActionResult GetCategories([FromUri] string include = "") 
+        public IHttpActionResult GetCategories([FromUri] string include, IPrincipal user) 
         {
+
             try
             {
-                Guid userId = Guid.Parse(User.Identity.GetUserId());
-                IEnumerable<Category> categories = _categoryService.GetCategoryTree(userId).ToList();
-                
+                IEnumerable<Category> categories = _categoryService.GetCategoryTree(Guid.Parse(user.Identity.GetUserId())).ToList();
                 return Ok(SerializerBuilder.Create().Serialize(categories, include));
             }
             catch (ArgumentNullException)
@@ -42,19 +45,23 @@ namespace FixALeak.API.Controllers
             }
         }
 
-        /*[Route("")]
+        [Route("")]
         [HttpPost]
-        public IHttpActionResult Add(CategoryVM model)
+        public IHttpActionResult Add(HttpRequestMessage request, IPrincipal user)
         {
-            Mapper.CreateMap<CategoryVM, Category>();
-            Mapper.CreateMap<Category, CategoryVM>();
-            var entity = Mapper.Map<CategoryVM, Category>(model);
-            entity.UserId = Guid.Parse(User.Identity.GetUserId());
-            var created = _categoryService.AddCategory(entity);
-            return Ok(Mapper.Map<Category, CategoryVM>(created));
-        }*/
+            var serializer = SerializerBuilder.Create();
 
-        
+            var content = request.Content.ReadAsStringAsync().Result;
+
+
+            Category category = serializer.Deserialize<Category>(content);
+            category.UserId = Guid.Parse(user.Identity.GetUserId());
+            var created = _categoryService.AddCategory(category);
+            return Ok(serializer.Serialize(created));
+            //return Ok();
+        }
+
+
 
 
 

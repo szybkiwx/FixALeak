@@ -14,7 +14,9 @@ namespace FixALeak.TestApi
         {
             var c = new Client();
             c.Authorize("Andrzej", "dupaZbita!");
-            c.GetCategories();
+           // c.GetCategories();
+            c.AddCategory();
+
             //c.Register("Andrzej", "dupaZbita!");
             //c.Register("Stefan", "eloelo");
             
