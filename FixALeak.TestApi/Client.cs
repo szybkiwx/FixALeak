@@ -70,7 +70,7 @@ namespace FixALeak.TestApi
             string newCategoryJson = @"
                {
                     ""data"": {
-                        ""type"": ""category"",
+                        ""type"": ""categories"",
                         ""attributes"": {
                             ""name"": ""test upload""
                         }
@@ -78,7 +78,13 @@ namespace FixALeak.TestApi
                 }
             ";
 
-            _webClient.UploadString("/api/categories", newCategoryJson); 
+            try {
+                _webClient.UploadString("/api/categories", newCategoryJson);
+            }
+            catch (Exception e)
+            {
+
+            } 
         }
     }
 }

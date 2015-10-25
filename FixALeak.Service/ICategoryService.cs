@@ -12,6 +12,9 @@ namespace FixALeak.Service
         IEnumerable<Category> GetCategories(Guid userId);
         IEnumerable<Category> GetCategoryTree(Guid userId);
         Category AddCategory(Category cat);
+        Category Get(int id);
+        bool Exists(Guid userId, string name);
+        Category Remove(int id);
         //void DeleteCategory(int id);       
     }
 }

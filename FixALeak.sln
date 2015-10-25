@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FixALeak.Web", "FixALeak.Web\FixALeak.Web.csproj", "{9447D218-5DAB-4CFE-BCC7-2C8FA384A42B}"
 EndProject
@@ -18,6 +18,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FixALeak.JsonApiSerializer.Tests", "FixALeak.JsonApiSerializer.Tests\FixALeak.JsonApiSerializer.Tests.csproj", "{8BB7BD3C-73BD-407A-B00C-51453C4E28F1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FixALeak.Data.IntegrationTests", "FixALeak.Data.IntegrationTests\FixALeak.Data.IntegrationTests.csproj", "{A8BE90AD-0ADC-4B9C-917E-979C4955EF21}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{3ED327D1-D48F-487A-AFB2-2A228A1BE6D7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FixALeak.API.Tests", "FixALeak.API.Tests\FixALeak.API.Tests.csproj", "{6F9FD5AD-C8FD-4809-8CBC-981EECA1BAF1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -57,8 +61,15 @@ Global
 		{A8BE90AD-0ADC-4B9C-917E-979C4955EF21}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A8BE90AD-0ADC-4B9C-917E-979C4955EF21}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A8BE90AD-0ADC-4B9C-917E-979C4955EF21}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6F9FD5AD-C8FD-4809-8CBC-981EECA1BAF1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6F9FD5AD-C8FD-4809-8CBC-981EECA1BAF1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6F9FD5AD-C8FD-4809-8CBC-981EECA1BAF1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6F9FD5AD-C8FD-4809-8CBC-981EECA1BAF1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{6F9FD5AD-C8FD-4809-8CBC-981EECA1BAF1} = {3ED327D1-D48F-487A-AFB2-2A228A1BE6D7}
 	EndGlobalSection
 EndGlobal

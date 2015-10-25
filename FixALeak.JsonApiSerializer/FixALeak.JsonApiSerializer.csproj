@@ -54,6 +54,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CollectionFactory.cs" />
     <Compile Include="CollectionTypeNotSupported.cs" />
     <Compile Include="IEntity.cs" />
     <Compile Include="ISingleObjectSerializer.cs" />

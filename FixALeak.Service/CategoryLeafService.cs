@@ -15,9 +15,28 @@ namespace FixALeak.Service
         {
             _ctx = ctx;
         }
-        public CategoryLeaf Add(CategoryLeaf categoryLeaf, int categoryId)
+        public CategoryLeaf Add(CategoryLeaf categoryLeaf)
         {
-            throw new NotImplementedException();
+            var result = _ctx.CategoryLeaves.Add(categoryLeaf);
+            _ctx.SaveChanges();
+            return result;
+        }
+
+        public bool Exists(int cat, string name)
+        {
+            return _ctx.CategoryLeaves.Where(x => x.CategoryID == cat).Any(x => x.Name == name);
+        }
+
+        public CategoryLeaf Get(int id)
+        {
+            return _ctx.CategoryLeaves.FirstOrDefault(x => x.ID == id);
+        }
+
+        public CategoryLeaf Remove(int id)
+        {
+            var toRemove = _ctx.CategoryLeaves.FirstOrDefault(x => x.ID == id);
+            _ctx.CategoryLeaves.Remove(toRemove);
+            return toRemove;
         }
     }
 }

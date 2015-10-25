@@ -15,7 +15,7 @@ namespace FixALeak.Data
 
         public DbSet<Expense> Expenses { get; set; }
         public DbSet<Category> Categories { get; set; }
-        public DbSet<CategoryLeaf> CategoryLeafs { get; set; }
+        public DbSet<CategoryLeaf> CategoryLeaves { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

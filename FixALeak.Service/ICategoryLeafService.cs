@@ -9,6 +9,9 @@ namespace FixALeak.Service
 {
     public interface ICategoryLeafService
     {
-        CategoryLeaf Add(CategoryLeaf categoryLeaf, int categoryId);
+        CategoryLeaf Add(CategoryLeaf categoryLeaf);
+        bool Exists(int cat, string name);
+        CategoryLeaf Get(int id);
+        CategoryLeaf Remove(int id);
     }
 }

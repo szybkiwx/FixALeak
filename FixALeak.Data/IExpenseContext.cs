@@ -13,6 +13,7 @@ namespace FixALeak.Data
     {
         DbSet<Expense> Expenses { get; set; }
         DbSet<Category> Categories { get; set; }
+        DbSet<CategoryLeaf> CategoryLeaves { get; set; }
         void SaveChanges();
     }
 }

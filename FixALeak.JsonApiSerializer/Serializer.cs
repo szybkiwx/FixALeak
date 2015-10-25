@@ -2,14 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Reflection;
-using System.Data.Entity.Design.PluralizationServices;
-using System.Globalization;
 using FixALeak.JsonApiSerializer.PropertySerializer;
 namespace FixALeak.JsonApiSerializer
 {
@@ -109,19 +102,13 @@ namespace FixALeak.JsonApiSerializer
                 where T : class, new()
 
         {
-            
             var rootNode = JObject.Parse(json);
             var dataNode = rootNode["data"];
-            var typeNode = dataNode["type"];
-
-            var resourceObject = _GetMainObject(dataNode);
-
+            var resourceObject = _GetMainObject<T>(dataNode);
             var relationships = dataNode["relationships"].AsEnumerable();
-
             if (relationships != null)
             {
-
-                resourceObject.ObjectType.GetProperties().ToList().ForEach(prop =>
+                typeof(T).GetProperties().ToList().ForEach(prop =>
                 {
                     string propName = prop.Name.ToLower();
                     foreach (var rel in relationships.Cast<JProperty>())
@@ -130,21 +117,18 @@ namespace FixALeak.JsonApiSerializer
                         {
                             if (rel.Value["data"] is JArray)
                             {
-                                //TODO: make sure 0-lenght wont blow things up
-                                var collection = ((JArray)rel.Value["data"])
-                                    .Select(x => new OutResourceObject(x).Instance)
-                                    .ToList();
-
-                                var genericType = new OutResourceObject(((JArray)rel.Value["data"])[0]).ObjectType;
-
-                                var listType = typeof(List<>);
-                                var constructedListType = listType.MakeGenericType(genericType);
-
-                                var instance = (IList)Activator.CreateInstance(constructedListType);
-                                collection.ForEach(x => instance.Add(x));
 
                                 if (prop.PropertyType.GetInterface("IEnumerable") != null)
                                 {
+                                    var instance = CollectionFactory.CreateCollectionInstance(prop.PropertyType);
+                                    Type genericType =  prop.PropertyType.GetGenericArguments()[0];
+                                    ((JArray)rel.Value["data"]).ToList().ForEach(collectionItem =>
+                                    {
+                                        var item = new OutResourceObject(collectionItem, genericType);
+                                        instance.Add(item.Instance);
+
+                                    });
+
                                     prop.SetValue(resourceObject.Instance, instance, null);
                                 }
                                 else
@@ -158,7 +142,7 @@ namespace FixALeak.JsonApiSerializer
                             }
                             else
                             {
-                                var relResourceObject = new OutResourceObject(rel.Value["data"]);
+                                var relResourceObject = new OutResourceObject(rel.Value["data"], prop.PropertyType);
                                 prop.SetValue(resourceObject.Instance, relResourceObject.Instance);
                             }
                         }
@@ -170,14 +154,14 @@ namespace FixALeak.JsonApiSerializer
         }
         
 
-        private OutResourceObject _GetMainObject(JToken dataNode)
+        private OutResourceObject _GetMainObject<T>(JToken dataNode)
         {
-            var resourceObject = new OutResourceObject(dataNode);
+            var resourceObject = new OutResourceObject(dataNode, typeof(T));
 
             var attributes = dataNode["attributes"];
             if (attributes != null)
             {
-                resourceObject.ObjectType.GetProperties().ToList().ForEach(prop =>
+                typeof(T).GetProperties().ToList().ForEach(prop =>
                 {
                     string propName = prop.Name.ToLower();
                     if (attributes[propName] != null)

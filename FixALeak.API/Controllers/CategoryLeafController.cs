@@ -9,10 +9,13 @@ using FixALeak.API.Models;
 using FixALeak.Data.Entities;
 using FixALeak.Service;
 using FixALeak.JsonApiSerializer;
+using System.Security.Principal;
+using Microsoft.AspNet.Identity;
+
 namespace FixALeak.API.Controllers
 {
-    [RoutePrefix("api/categoryleaves")]
-    //[Authorize]
+    [RoutePrefix("api/categories/{cat:int}/categoryleaves")]
+    [Authorize]
     public class CategoryLeafController : ApiController
     {
         private ICategoryLeafService _categoryLeafService;
@@ -22,28 +25,58 @@ namespace FixALeak.API.Controllers
             _categoryLeafService = categoryLeafService;
         }
 
-        [Route("")]
-        [HttpGet]
-        public IHttpActionResult Get()
-        {
-            
-            return Ok();
-        }
 
         [Route("")]
         [HttpPost]
-        public IHttpActionResult Add(string json)
+        public IHttpActionResult Add(HttpRequestMessage request, int cat, IPrincipal user)
         {
 
-         
-            /**Mapper.CreateMap<CategoryLeafVM, CategoryLeaf>();
-            Mapper.CreateMap<Category, CategoryVM>();
-            var entity = Mapper.Map<CategoryLeafVM, CategoryLeaf>(model);
-            entity.CategoryID = categoryId;
+            var serializer = SerializerBuilder.Create();
+            var content = request.Content.ReadAsStringAsync().Result;
+            var userId = Guid.Parse(user.Identity.GetUserId());
+            var categoryLeaf = serializer.Deserialize<CategoryLeaf>(content);
 
-            var created = _categoryLeafService.Add(entity);
-            return Ok(Mapper.Map<Category, CategoryVM>(created));*/
+            if(_categoryLeafService.Exists(cat, categoryLeaf.Name))
+            {
+                var responseError = new HttpResponseMessage(HttpStatusCode.Conflict);
+                responseError.Content = new StringContent("Category Leaf exixsts");
+                return ResponseMessage(responseError);
+            }
+
+            categoryLeaf.CategoryID = cat;
+            _categoryLeafService.Add(categoryLeaf);
+
+            var response = new HttpResponseMessage(HttpStatusCode.Created);
+            response.Content = new StringContent("Category Leaf created");
+            return ResponseMessage(response);
+        }
+
+
+        [Route("/{id:int}")]
+        [HttpGet]
+        public IHttpActionResult Get(int id, IPrincipal user, [FromUri] string include)
+        {
+            var serializer = SerializerBuilder.Create();
+
+            var result =_categoryLeafService.Get(id);
+            if (result != null)
+            {
+                return Ok(SerializerBuilder.Create().Serialize(serializer, include));
+            }
+
+            return NotFound();
+
+        }
+
+        [Route("/{id:int}")]
+        [HttpDelete]
+        public IHttpActionResult Delete(int id, IPrincipal user)
+        {
+            
+            var result = _categoryLeafService.Remove(id);
+
             return Ok();
+
         }
     }
 }

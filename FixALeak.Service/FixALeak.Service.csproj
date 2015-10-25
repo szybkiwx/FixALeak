@@ -48,8 +48,10 @@
   <ItemGroup>
     <Compile Include="CategoryLeafService.cs" />
     <Compile Include="CategoryService.cs" />
+    <Compile Include="ExpenseService.cs" />
     <Compile Include="ICategoryLeafService.cs" />
     <Compile Include="ICategoryService.cs" />
+    <Compile Include="IExpenseService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

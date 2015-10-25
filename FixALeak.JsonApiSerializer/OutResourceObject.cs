@@ -12,13 +12,13 @@ namespace FixALeak.JsonApiSerializer
     {
         public int? ID { get; private set; }
 
-        public Type ObjectType { get; private set;}
+        //public Type ObjectType { get; private set;}
         
         public object Instance { get; private set; }
 
-        public OutResourceObject(JToken rootNode)
+        public OutResourceObject(JToken rootNode, Type type)
         {
-            var typeNode = rootNode["type"];
+            /*var typeNode = rootNode["type"];
 
             var types = AppDomain.CurrentDomain.GetAssemblies().SelectMany(assembly => {
                 try {
@@ -31,13 +31,15 @@ namespace FixALeak.JsonApiSerializer
             });
 
             ObjectType = types.Where(t => t.Name.ToLower() == typeNode.ToString()).SingleOrDefault();
+            */
 
-            Instance = Convert.ChangeType(Activator.CreateInstance(ObjectType), ObjectType);
+           
+            Instance = Convert.ChangeType(Activator.CreateInstance(type), type);
             if (rootNode["id"] != null)
             {
                 string id = rootNode["id"].ToString();
                 ID = int.Parse(id);
-                ObjectType.GetProperty("ID").SetValue(Instance, ID);
+                type.GetProperty("ID").SetValue(Instance, ID);
             }
         }
     }

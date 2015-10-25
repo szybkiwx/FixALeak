@@ -106,6 +106,29 @@ namespace FixALeak.JsonApiSerializer.Tests.PropertySerializer
         }
 
         [TestMethod]
+        public void Serialize_IEnumerable_When_Given_Partial_Object_Should_Resturn_Serialized()
+        {
+            var obj = new MainObject()
+            {
+                ID = 2,
+                Name = "abc",
+                RelOb = new RelatedObject() { ID = 12, Name = "xyz" },
+                RealtedObject3List = null
+            };
+            var result = sut.Serialize(obj, obj.GetType().GetProperty("RealtedObject3List"));
+
+            Assert.AreEqual("realtedobject3list", result.Name);
+
+            var data = result.Value.First;
+            var links = data.Next;
+
+            var array = new JArray();
+            
+            var expectedData = new JProperty("data", array);
+            Assert.IsTrue(JToken.DeepEquals(expectedData, data));
+        }
+
+        [TestMethod]
         public void SerializeFull_IEnumerable_When_Given_Valid_Object_Should_Resturn_Serialized()
         {
             var obj = new MainObject()
