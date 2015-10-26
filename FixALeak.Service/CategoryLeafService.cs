@@ -32,6 +32,11 @@ namespace FixALeak.Service
             return _ctx.CategoryLeaves.FirstOrDefault(x => x.ID == id);
         }
 
+        public IEnumerable<CategoryLeaf> GetCategoryLeaves(int catId)
+        {
+            return _ctx.CategoryLeaves.Where(x => x.CategoryID == catId);
+        }
+
         public CategoryLeaf Remove(int id)
         {
             var toRemove = _ctx.CategoryLeaves.FirstOrDefault(x => x.ID == id);

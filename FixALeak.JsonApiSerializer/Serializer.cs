@@ -146,6 +146,10 @@ namespace FixALeak.JsonApiSerializer
                                 prop.SetValue(resourceObject.Instance, relResourceObject.Instance);
                             }
                         }
+                        else if (rel.Name + "id" == propName)
+                        {
+                            prop.SetValue(resourceObject.Instance, Convert.ChangeType(rel.Value["id"], prop.PropertyType));
+                        }
                     };
                 });
             }

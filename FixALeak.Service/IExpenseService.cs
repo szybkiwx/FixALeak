@@ -9,9 +9,10 @@ namespace FixALeak.Service
 {
     public interface IExpenseService
     {
-        Expense Add(Expense expense, int categoryLeaf);
+        Expense Add(Expense expense);
         Expense Get(int id);
         IEnumerable<Expense> GetExpenses(int categoryLeafId);
-
+        Expense Remove(int id);
+        bool Exists(int id);
     }
 }

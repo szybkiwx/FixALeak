@@ -43,7 +43,7 @@ namespace FixALeak.API.Controllers
                 return ResponseMessage(responseError);
             }
 
-            categoryLeaf.CategoryID = cat;
+            //categoryLeaf.CategoryID = cat;
             _categoryLeafService.Add(categoryLeaf);
 
             var response = new HttpResponseMessage(HttpStatusCode.Created);

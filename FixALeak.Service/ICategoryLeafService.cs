@@ -13,5 +13,6 @@ namespace FixALeak.Service
         bool Exists(int cat, string name);
         CategoryLeaf Get(int id);
         CategoryLeaf Remove(int id);
+        IEnumerable<CategoryLeaf> GetCategoryLeaves(int catId);
     }
 }
