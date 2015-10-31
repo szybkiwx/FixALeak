@@ -32,7 +32,7 @@ namespace FixALeak.JsonApiSerializer.Tests
         [TestMethod]
         public void Test_Get_TypeName()
         {
-            Assert.AreEqual("testentity", sut.TypeName);
+            Assert.AreEqual("testentities", sut.TypeName);
         }
 
         [TestMethod]

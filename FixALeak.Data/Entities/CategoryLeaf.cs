@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace FixALeak.Data.Entities
 {
-    public class CategoryLeaf
+    public class CategoryLeaf : IEntity
     {
         public int ID { get; set; }
         public string Name { get; set; }

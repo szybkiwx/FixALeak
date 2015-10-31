@@ -98,11 +98,69 @@ namespace FixALeak.JsonApiSerializer
             }
         }
 
+        public object Deserialize(string json, Type returnType)
+        {
+            var rootNode = JObject.Parse(json);
+            var dataNode = rootNode["data"];
+            var resourceObject = _GetMainObject(dataNode, returnType);
+            var relationships = dataNode["relationships"].AsEnumerable();
+            if (relationships != null)
+            {
+                returnType.GetProperties().ToList().ForEach(prop =>
+                {
+                    string propName = prop.Name.ToLower();
+                    foreach (var rel in relationships.Cast<JProperty>())
+                    {
+                        if (rel.Name == propName)
+                        {
+                            if (rel.Value["data"] is JArray)
+                            {
+
+                                if (prop.PropertyType.GetInterface("IEnumerable") != null)
+                                {
+                                    var instance = CollectionFactory.CreateCollectionInstance(prop.PropertyType);
+                                    Type genericType = prop.PropertyType.GetGenericArguments()[0];
+                                    ((JArray)rel.Value["data"]).ToList().ForEach(collectionItem =>
+                                    {
+                                        var item = new OutResourceObject(collectionItem, genericType);
+                                        instance.Add(item.Instance);
+
+                                    });
+
+                                    prop.SetValue(resourceObject.Instance, instance, null);
+                                }
+                                else
+                                {
+                                    throw new CollectionTypeNotSupported();
+                                }
+                            }
+                            else if (prop.PropertyType.IsValueType)
+                            {
+                                prop.SetValue(resourceObject.Instance, Convert.ChangeType(dataNode["attributes"][propName].ToString(), prop.PropertyType));
+                            }
+                            else
+                            {
+                                var relResourceObject = new OutResourceObject(rel.Value["data"], prop.PropertyType);
+                                prop.SetValue(resourceObject.Instance, relResourceObject.Instance);
+                            }
+                        }
+                        else if (rel.Name + "id" == propName)
+                        {
+                            prop.SetValue(resourceObject.Instance, Convert.ChangeType(rel.Value["id"], prop.PropertyType));
+                        }
+                    };
+                });
+            }
+
+            return Convert.ChangeType(resourceObject.Instance, returnType);
+        } 
+
         public T Deserialize<T>(string json)
                 where T : class, new()
 
         {
-            var rootNode = JObject.Parse(json);
+            return Deserialize(json, typeof(T)) as T;
+            /*var rootNode = JObject.Parse(json);
             var dataNode = rootNode["data"];
             var resourceObject = _GetMainObject<T>(dataNode);
             var relationships = dataNode["relationships"].AsEnumerable();
@@ -154,18 +212,18 @@ namespace FixALeak.JsonApiSerializer
                 });
             }
 
-            return resourceObject.Instance as T;
+            return resourceObject.Instance as T;*/
         }
         
 
-        private OutResourceObject _GetMainObject<T>(JToken dataNode)
+        private OutResourceObject _GetMainObject(JToken dataNode, Type returnType)
         {
-            var resourceObject = new OutResourceObject(dataNode, typeof(T));
+            var resourceObject = new OutResourceObject(dataNode, returnType);
 
             var attributes = dataNode["attributes"];
             if (attributes != null)
             {
-                typeof(T).GetProperties().ToList().ForEach(prop =>
+                returnType.GetProperties().ToList().ForEach(prop =>
                 {
                     string propName = prop.Name.ToLower();
                     if (attributes[propName] != null)

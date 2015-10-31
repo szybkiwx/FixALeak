@@ -12,7 +12,7 @@ using System.Web.Http;
 
 namespace FixALeak.API.Controllers
 {
-    [RoutePrefix("api/categoryleaves/{leaf:int}/expenses")]
+    [RoutePrefix("api/expenses")]
     [Authorize]
     public class ExpenseController : ApiController
     {
@@ -32,7 +32,7 @@ namespace FixALeak.API.Controllers
             return Ok(serializer.Serialize(expenses));
         }
 
-        [Route("/{id:int}")]
+        [Route("{id:int}")]
         [HttpGet]
         public IHttpActionResult Get(int id, int leaf)
         {
@@ -64,7 +64,7 @@ namespace FixALeak.API.Controllers
             return ResponseMessage(response);
         }
 
-        [Route("/{id:int}")]
+        [Route("{id:int}")]
         [HttpDelete]
         public IHttpActionResult Delete(int id, int leaf)
         {

@@ -130,7 +130,7 @@ namespace FixALeak.API.Tests
 
             var root = JToken.Parse(content);
             var data = root["data"];
-            Assert.AreEqual("category", data["type"]);
+            Assert.AreEqual("categories", data["type"]);
             Assert.AreEqual(12, data["id"]);
 
             var attributes = data["attributes"];

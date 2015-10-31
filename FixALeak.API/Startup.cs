@@ -25,18 +25,22 @@ namespace FixALeak.API
         {
             HttpConfiguration config = new HttpConfiguration();
             config.Formatters.JsonFormatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("text/html"));
+            var jsonApiFormatter = new JsonApiMediaTypeFormatter();
+            jsonApiFormatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("application/vnd.api+json") );
+            config.Formatters.Add(jsonApiFormatter);
+
             config.DependencyResolver = new UnityDependencyResolver.Lib.UnityWebApiDependencyResolver(UnityHelpers.GetConfiguredContainer());
             config.BindParameter(typeof(IPrincipal), new IPrincipalModelBinder());
             config.Filters.Add(new JsonReaderExceptionFilter());
-            WebApiConfig.Register(config);
+
+            
 
             app.UseCors(Microsoft.Owin.Cors.CorsOptions.AllowAll);
             ConfigureOAuth(app);
             ConfigureSerializer();
-           
-           
+
+            WebApiConfig.Register(config);
             app.UseWebApi(config);
-         
         }
 
         private void ConfigureSerializer()

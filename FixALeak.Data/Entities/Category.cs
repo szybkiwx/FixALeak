@@ -6,7 +6,7 @@ using System.Web;
 
 namespace FixALeak.Data.Entities
 {
-    public class Category
+    public class Category : IEntity
     {
         public int ID { get; set; }
         public string Name { get; set; }

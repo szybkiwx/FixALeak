@@ -6,7 +6,7 @@ using System.Web;
 
 namespace FixALeak.Data.Entities
 {
-    public class Expense
+    public class Expense : IEntity
     {
         public int ID { get; set; }
         public decimal Value { get; set; }

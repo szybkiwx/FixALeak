@@ -38,7 +38,7 @@ namespace FixALeak.JsonApiSerializer.Tests.PropertySerializer
 
             var expectedData = new JProperty("data",  JObject.FromObject(new {
                 id=12,
-                type="relatedobject"
+                type="relatedobjects"
             }));
             Assert.AreEqual(expectedData.ToString(), data.ToString());
         }

@@ -37,12 +37,15 @@ namespace FixALeak.API.Controllers
             try
             {
                 IEnumerable<Category> categories = _categoryService.GetCategoryTree(Guid.Parse(user.Identity.GetUserId())).ToList();
-                return Ok(SerializerBuilder.Create().Serialize(categories, include));
+                //return Ok(SerializerBuilder.Create().Serialize(categories, include));
+                return Ok(categories);
             }
             catch (ArgumentNullException)
             {
                 return NotFound();
             }
+
+
         }
 
         [Route("")]
@@ -67,7 +70,7 @@ namespace FixALeak.API.Controllers
         }
 
 
-        [Route("/{id:int}")]
+        [Route("{id:int}")]
         [HttpGet]
         public IHttpActionResult Get(int id, IPrincipal user)
         {
@@ -87,7 +90,7 @@ namespace FixALeak.API.Controllers
             return ResponseMessage(response);
         }
 
-        [Route("/{id:int}")]
+        [Route("{id:int}")]
         [HttpDelete]
         public IHttpActionResult Delete(int id, IPrincipal user)
         {

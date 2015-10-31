@@ -54,7 +54,7 @@ namespace FixALeak.TestApi
 
         public List<Category> GetCategories()
         {
-            _webClient.Headers[HttpRequestHeader.ContentType] = "application/json";
+            _webClient.Headers[HttpRequestHeader.ContentType] = "application/vnd.api+json";
             _webClient.Headers[HttpRequestHeader.Authorization] = "Bearer " + _token;
             string data = _webClient.DownloadString("/api/categories?include=subcategories");
             return null;
@@ -64,7 +64,8 @@ namespace FixALeak.TestApi
 
         public void AddCategory()
         {
-            _webClient.Headers[HttpRequestHeader.ContentType] = "application/vnd.api+json";
+            //_webClient.Headers[HttpRequestHeader.ContentType] = "application/vnd.api+json";
+            _webClient.Headers[HttpRequestHeader.ContentType] = "application/json";
             _webClient.Headers[HttpRequestHeader.Authorization] = "Bearer " + _token;
 
             string newCategoryJson = @"

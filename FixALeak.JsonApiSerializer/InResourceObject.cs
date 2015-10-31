@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
+using System.Data.Entity.Design.PluralizationServices;
+using System.Globalization;
 
 namespace FixALeak.JsonApiSerializer
 {
@@ -13,6 +15,14 @@ namespace FixALeak.JsonApiSerializer
 
         int? _id;
         string _typeName;
+
+        private static PluralizationService PluralizationService
+        {
+            get
+            {
+                return PluralizationService.CreateService(new CultureInfo("en-US"));
+            }
+        }
 
         public int ID
         {
@@ -34,11 +44,14 @@ namespace FixALeak.JsonApiSerializer
                 if(string.IsNullOrWhiteSpace(_typeName))
                 {
                     Type type = _val.GetType();
-                    _typeName = type.Name.ToLower();
+                    string typeName = type.Name.ToLower();
+
                     if (type.Namespace == "System.Data.Entity.DynamicProxies")
                     {
-                        _typeName = _typeName.Split('_')[0];
+                        typeName = typeName.Split('_')[0];
                     }
+
+                    _typeName = PluralizationService.Pluralize(typeName);
                 }
 
                 return _typeName;

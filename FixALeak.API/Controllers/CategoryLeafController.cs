@@ -14,7 +14,7 @@ using Microsoft.AspNet.Identity;
 
 namespace FixALeak.API.Controllers
 {
-    [RoutePrefix("api/categories/{cat:int}/categoryleaves")]
+    [RoutePrefix("api/categoryleaves")]
     [Authorize]
     public class CategoryLeafController : ApiController
     {
@@ -28,7 +28,7 @@ namespace FixALeak.API.Controllers
 
         [Route("")]
         [HttpPost]
-        public IHttpActionResult Add(HttpRequestMessage request, int cat, IPrincipal user)
+        public IHttpActionResult Add(HttpRequestMessage request, IPrincipal user)
         {
 
             var serializer = SerializerBuilder.Create();
@@ -36,7 +36,7 @@ namespace FixALeak.API.Controllers
             var userId = Guid.Parse(user.Identity.GetUserId());
             var categoryLeaf = serializer.Deserialize<CategoryLeaf>(content);
 
-            if(_categoryLeafService.Exists(cat, categoryLeaf.Name))
+            if(_categoryLeafService.Exists(categoryLeaf.CategoryID, categoryLeaf.Name))
             {
                 var responseError = new HttpResponseMessage(HttpStatusCode.Conflict);
                 responseError.Content = new StringContent("Category Leaf exixsts");
@@ -52,23 +52,32 @@ namespace FixALeak.API.Controllers
         }
 
 
-        [Route("/{id:int}")]
+        [Route("{id:int}")]
         [HttpGet]
         public IHttpActionResult Get(int id, IPrincipal user, [FromUri] string include)
         {
-            var serializer = SerializerBuilder.Create();
+            CategoryLeaf result;
+            if (include == "expenses")
+            {
+                result = _categoryLeafService.GetWithIncludes(id, include);
+            }
+            else
+            {
+                result = _categoryLeafService.Get(id);
+            }
 
-            var result =_categoryLeafService.Get(id);
             if (result != null)
             {
-                return Ok(SerializerBuilder.Create().Serialize(serializer, include));
+                var response = new HttpResponseMessage(HttpStatusCode.OK);
+                response.Content = new StringContent(SerializerBuilder.Create().Serialize(result, include).ToString());
+                return ResponseMessage(response);
             }
 
             return NotFound();
 
         }
 
-        [Route("/{id:int}")]
+        [Route("{id:int}")]
         [HttpDelete]
         public IHttpActionResult Delete(int id, IPrincipal user)
         {

@@ -3,6 +3,7 @@ using FixALeak.Data.Entities;
 using FixALeak.Service;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -81,7 +82,7 @@ namespace FixALeak.API.Tests
 
             var userId = Guid.NewGuid();
 
-            var response = sut.Add(request, 5, FakeUserFactory.NewFakeUser(userId, ""));
+            var response = sut.Add(request, FakeUserFactory.NewFakeUser(userId, ""));
 
             _categoryLeafService.Verify(x => x.Add(It.IsAny<CategoryLeaf>()));
 
@@ -91,14 +92,20 @@ namespace FixALeak.API.Tests
             Assert.AreEqual(HttpStatusCode.Created, ((ResponseMessageResult)response).Response.StatusCode);
         }
 
-       /* [TestMethod]
-        public void TestAdd_WhenCategoryExists_CategoryAdded()
+        [TestMethod]
+        public void TestAdd_WhenCategorLeafyExists_CategoryLeafAdded()
         {
             var postData = @"{
                 ""data"": {
                     ""type"": ""categories"",
                     ""attributes"": {
                         ""name"": ""test upload""
+                    },
+                    ""relationships"" : {
+                        ""category"": {
+                            ""type"" : ""categories"", 
+                            ""id"" : 5
+                        }
                     }
                 }
             }";
@@ -106,54 +113,101 @@ namespace FixALeak.API.Tests
             var userId = Guid.NewGuid();
 
             var request = new RequestMessageBuilder()
-                .WithAbsoluteUrl("http://localhost/api/category")
+                .WithAbsoluteUrl("http://localhost/api/categories/12/categoryleavesy")
                 .WithMethod(HttpMethod.Post)
                 .WithBody(postData)
                 .Build();
 
 
            
-            _categoryService.Setup(x => x.Exists(userId, "test upload")).Returns(true);
+            _categoryLeafService.Setup(x => x.Exists(5, "test upload")).Returns(true);
 
             var response = sut.Add(request, FakeUserFactory.NewFakeUser(userId, ""));
 
             Assert.IsInstanceOfType(response, typeof(ResponseMessageResult));
             Assert.AreEqual(HttpStatusCode.Conflict, ((ResponseMessageResult)response).Response.StatusCode);
         }
-        */
+        
 
-       /* [TestMethod]
-        public void TestGet_WhenCategoryExists_CategoryReturned()
+        [TestMethod]
+        public void TestGet_WhenCategoryLeafExists_CategoryLeafReturned()
         {
 
             var userId = Guid.NewGuid();
-
-            _categoryService.Setup(x => x.GetCategories(userId)).Returns(new List<Category>()
+            _categoryLeafService.Setup(x => x.Get(12)).Returns(new CategoryLeaf()
             {
-                new Category()
+                
+                ID = 12,
+                Name = "xyz",
+                CategoryID = 5,
+                Expenses = new List<Expense>
                 {
-                    ID = 12,
-                    Name = "xyz",
-                    UserId = userId
+                    new Expense()
+                    {
+                        Title = "abc",
+                        Value = 12m,
+                        ID = 18
+                    }
                 }
             });
 
  
-            var response = sut.Get(12, FakeUserFactory.NewFakeUser(userId, ""));
-
-            Assert.IsInstanceOfType(response, typeof(ResponseMessageResult));
+            var response = sut.Get(12, FakeUserFactory.NewFakeUser(userId, ""), "");
+            
             var result = ((ResponseMessageResult)response).Response;
             Assert.AreEqual(HttpStatusCode.OK, result.StatusCode);
             var content = result.Content.ReadAsStringAsync().Result;
 
             var root = JToken.Parse(content);
             var data = root["data"];
-            Assert.AreEqual("category", data["type"]);
+            Assert.AreEqual("categoryleaves", data["type"]);
             Assert.AreEqual(12, data["id"]);
 
             var attributes = data["attributes"];
             Assert.AreEqual("xyz", attributes["name"]);
-            Assert.AreEqual(userId.ToString(), attributes["userid"]);
-        }*/
+           
+            var relationships = data["relationships"];
+            var expenses = relationships["expenses"]["data"];
+            Assert.AreEqual(18, expenses[0]["id"]);
+            Assert.AreEqual("expenses", expenses[0]["type"]);
+
+        }
+
+        [TestMethod]
+        public void TestGetWithInclude_WhenCategoryLeafExists_CategoryLeafReturned()
+        {
+
+            var userId = Guid.NewGuid();
+            _categoryLeafService.Setup(x => x.Get(12)).Returns(new CategoryLeaf()
+            {
+
+                ID = 12,
+                Name = "xyz",
+                CategoryID = 5,
+                Expenses = new List<Expense>
+                {
+                    new Expense()
+                    {
+                        Title = "abc",
+                        Value = 12m,
+                        ID = 18
+                    }
+                }
+            });
+
+
+            var response = sut.Get(12, FakeUserFactory.NewFakeUser(userId, ""), "expenses");
+
+            var result = ((ResponseMessageResult)response).Response;
+            Assert.AreEqual(HttpStatusCode.OK, result.StatusCode);
+            var content = result.Content.ReadAsStringAsync().Result;
+
+            var root = JToken.Parse(content);
+            var data = root["data"];
+            Assert.AreEqual("expenses", data["included"][0]["type"]);
+            Assert.AreEqual("18", data["included"][0]["id"]);
+
+
+        }
     }
 }

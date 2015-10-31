@@ -14,5 +14,7 @@ namespace FixALeak.Service
         CategoryLeaf Get(int id);
         CategoryLeaf Remove(int id);
         IEnumerable<CategoryLeaf> GetCategoryLeaves(int catId);
+        IEnumerable<CategoryLeaf> GetCategoryLeavesWithIncludes(int id, string include);
+        CategoryLeaf GetWithIncludes(int id, string include);
     }
 }
