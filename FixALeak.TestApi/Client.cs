@@ -64,8 +64,8 @@ namespace FixALeak.TestApi
 
         public void AddCategory()
         {
-            //_webClient.Headers[HttpRequestHeader.ContentType] = "application/vnd.api+json";
-            _webClient.Headers[HttpRequestHeader.ContentType] = "application/json";
+            _webClient.Headers[HttpRequestHeader.ContentType] = "application/vnd.api+json";
+            //_webClient.Headers[HttpRequestHeader.ContentType] = "application/json";
             _webClient.Headers[HttpRequestHeader.Authorization] = "Bearer " + _token;
 
             string newCategoryJson = @"
@@ -86,6 +86,42 @@ namespace FixALeak.TestApi
             {
 
             } 
+        }
+
+        public void AddCategoryLeaf(int catId)
+        {
+            _webClient.Headers[HttpRequestHeader.ContentType] = "application/vnd.api+json";
+            //_webClient.Headers[HttpRequestHeader.ContentType] = "application/json";
+            _webClient.Headers[HttpRequestHeader.Authorization] = "Bearer " + _token;
+
+            string newCategoryJson = @"
+               {
+                    ""data"": {
+                        ""type"": ""categoryleaves"",
+                        ""attributes"": {
+                            ""name"": ""test upload""
+                        },
+                        ""relationships"": {
+                            ""category"": {
+                                 ""data"": { 
+                                    ""type"": ""categories"", 
+                                    ""id"": """ + catId + @""" 
+                                }
+                            }
+                        }
+                    }
+                    
+                }
+            ";
+
+            try
+            {
+                _webClient.UploadString("/api/categoryleaves", newCategoryJson);
+            }
+            catch (Exception e)
+            {
+
+            }
         }
     }
 }

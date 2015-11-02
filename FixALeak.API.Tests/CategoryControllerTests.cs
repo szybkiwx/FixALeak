@@ -13,6 +13,7 @@ using FixALeak.Data.Entities;
 using System.Web.Http.Results;
 using System.Net;
 using Newtonsoft.Json.Linq;
+using System.Web.Http.Routing;
 
 namespace FixALeak.API.Tests
 {
@@ -20,6 +21,8 @@ namespace FixALeak.API.Tests
     public class CategoryControllerTests
     {
         private Mock<ICategoryService> _categoryService;
+        private Mock<UrlHelper> _urlHelper;
+
 
         private CategoryController sut;
 
@@ -27,6 +30,7 @@ namespace FixALeak.API.Tests
         public void SetUp()
         {
             _categoryService = new Mock<ICategoryService>();
+            _urlHelper = new Mock<UrlHelper>();
             sut = new CategoryController(_categoryService.Object);
 
         }
@@ -34,23 +38,7 @@ namespace FixALeak.API.Tests
         [TestMethod]
         public void TestAdd_WhenCategoryDoesntExist_CategoryAdded()
         {
-            var postData = @"{
-                ""data"": {
-                    ""type"": ""categories"",
-                    ""attributes"": {
-                        ""name"": ""test upload""
-                    }
-                }
-            }";
-
             var userId = Guid.NewGuid();
-
-            var request = new RequestMessageBuilder()
-                .WithAbsoluteUrl("http://localhost/api/category")
-                .WithMethod(HttpMethod.Post)
-                .WithBody(postData)
-                .Build();
-
 
             _categoryService.Setup(x => x.GetCategories(userId)).Returns(new List<Category>()
             {
@@ -67,42 +55,36 @@ namespace FixALeak.API.Tests
                 UserId = userId
             };
 
-            _categoryService.Setup(x => x.AddCategory(It.IsAny<Category>())).Returns((Category c) => { c.ID = 12; return c; });
+            Category created = new Category()
+            {
+                ID = 12,
+                Name = "test upload",
+                UserId = userId
+            };
 
-            var response = sut.Add(request, FakeUserFactory.NewFakeUser(userId, ""));
-
-            Assert.IsInstanceOfType(response, typeof(ResponseMessageResult));
-            Assert.AreEqual(HttpStatusCode.Created, ((ResponseMessageResult)response).Response.StatusCode);
+            _categoryService.Setup(x => x.AddCategory(It.IsAny<Category>())).Returns((Category c) => { return created; });
+            _urlHelper.Setup(x => x.Link("GetCategory", It.IsAny<object>())).Returns("http://locahost/api/categories/12");
+            sut.Url = _urlHelper.Object;
+            var response = sut.Add(cat, FakeUserFactory.NewFakeUser(userId, ""));
+            
+            Assert.IsInstanceOfType(response, typeof(CreatedNegotiatedContentResult<Category>));
         }
 
         [TestMethod]
-        public void TestAdd_WhenCategoryExists_CategoryAdded()
+        public void TestAdd_WhenCategoryExists_CategoryNotAdded()
         {
-            var postData = @"{
-                ""data"": {
-                    ""type"": ""categories"",
-                    ""attributes"": {
-                        ""name"": ""test upload""
-                    }
-                }
-            }";
-
             var userId = Guid.NewGuid();
-
-            var request = new RequestMessageBuilder()
-                .WithAbsoluteUrl("http://localhost/api/category")
-                .WithMethod(HttpMethod.Post)
-                .WithBody(postData)
-                .Build();
-
-
 
             _categoryService.Setup(x => x.Exists(userId, "test upload")).Returns(true);
 
-            var response = sut.Add(request, FakeUserFactory.NewFakeUser(userId, ""));
+            Category cat = new Category()
+            {
+                Name = "test upload"
+            };
 
-            Assert.IsInstanceOfType(response, typeof(ResponseMessageResult));
-            Assert.AreEqual(HttpStatusCode.Conflict, ((ResponseMessageResult)response).Response.StatusCode);
+            var response = sut.Add(cat, FakeUserFactory.NewFakeUser(userId, ""));
+
+            Assert.IsInstanceOfType(response, typeof(ConflictResult));
         }
 
 
@@ -111,31 +93,20 @@ namespace FixALeak.API.Tests
         {
 
             var userId = Guid.NewGuid();
-
-            _categoryService.Setup(x => x.GetCategories(userId)).Returns(new List<Category>()
+            var expected = new Category()
             {
-                new Category()
-                {
-                    ID = 12,
-                    Name = "xyz",
-                    UserId = userId
-                }
-            });
+                ID = 12,
+                Name = "xyz",
+                UserId = userId
+            };
+            _categoryService.Setup(x => x.Get(12)).Returns(
+                expected
+            );
             var response = sut.Get(12, FakeUserFactory.NewFakeUser(userId, ""));
 
-            Assert.IsInstanceOfType(response, typeof(ResponseMessageResult));
-            var result = ((ResponseMessageResult)response).Response;
-            Assert.AreEqual(HttpStatusCode.OK, result.StatusCode);
-            var content = result.Content.ReadAsStringAsync().Result;
+            Assert.IsInstanceOfType(response, typeof(OkNegotiatedContentResult<Category>));
+            Assert.AreEqual(expected, ((OkNegotiatedContentResult<Category>)response).Content);
 
-            var root = JToken.Parse(content);
-            var data = root["data"];
-            Assert.AreEqual("categories", data["type"]);
-            Assert.AreEqual(12, data["id"]);
-
-            var attributes = data["attributes"];
-            Assert.AreEqual("xyz", attributes["name"]);
-            Assert.AreEqual(userId.ToString(), attributes["userid"]);
         }
     }
 }

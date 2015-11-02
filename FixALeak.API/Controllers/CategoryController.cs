@@ -3,18 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Threading.Tasks;
 using System.Web.Http;
-using FixALeak.API.Models;
+
 using FixALeak.Service;
 using Microsoft.AspNet.Identity;
-using AutoMapper;
+
 using FixALeak.Data.Entities;
-using FixALeak.JsonApiSerializer;
-using FixALeak.API.Extensions;
+
 using System.Security.Principal;
-using Newtonsoft.Json.Linq;
-using Newtonsoft.Json;
+
 
 namespace FixALeak.API.Controllers
 {
@@ -24,14 +21,14 @@ namespace FixALeak.API.Controllers
     {
         private ICategoryService _categoryService;
 
-        public CategoryController(ICategoryService catService) 
+        public CategoryController(ICategoryService catService)
         {
             _categoryService = catService;
         }
 
         [Route("")]
         [HttpGet]
-        public IHttpActionResult GetCategories([FromUri] string include, IPrincipal user) 
+        public IHttpActionResult GetCategories([FromUri] string include, IPrincipal user)
         {
 
             try
@@ -50,44 +47,34 @@ namespace FixALeak.API.Controllers
 
         [Route("")]
         [HttpPost]
-        public IHttpActionResult Add(HttpRequestMessage request, IPrincipal user)
+        public IHttpActionResult Add(Category category, IPrincipal user)
         {
-            var serializer = SerializerBuilder.Create();
-            var content = request.Content.ReadAsStringAsync().Result;
-            Category category = serializer.Deserialize<Category>(content);
             var userId = Guid.Parse(user.Identity.GetUserId());
             category.UserId = userId;
             if (_categoryService.Exists(userId, category.Name))
             {
-                var responseError = new HttpResponseMessage(HttpStatusCode.Conflict);
-                responseError.Content = new StringContent("Category exixsts");
-                return ResponseMessage(responseError); 
+                return Conflict();
             }
             var created = _categoryService.AddCategory(category);
-            var response = new HttpResponseMessage(HttpStatusCode.Created);
-            response.Content = new StringContent(serializer.Serialize(created).ToString());
-            return ResponseMessage(response);
-        }
+            ;
+
+            return Created(Url.Link("GetCategory", new { id = created.ID }), created);
+        } 
 
 
-        [Route("{id:int}")]
+        [Route("{id:int}", Name = "GetCategory")]
         [HttpGet]
         public IHttpActionResult Get(int id, IPrincipal user)
         {
 
-            var serializer = SerializerBuilder.Create();
             var userId = Guid.Parse(user.Identity.GetUserId());
-            var result = _categoryService.GetCategories(userId).FirstOrDefault(cat => cat.ID == id);
+            var result = _categoryService.Get(id);
             if(result == null)
             {
-                var responseError = new HttpResponseMessage(HttpStatusCode.NotFound);
-                responseError.Content = new StringContent("Category does not exixst");
-                return ResponseMessage(responseError);
+                return NotFound();
             }
 
-            var response = new HttpResponseMessage(HttpStatusCode.OK);
-            response.Content = new StringContent(serializer.Serialize(result).ToString());
-            return ResponseMessage(response);
+            return Ok(result);
         }
 
         [Route("{id:int}")]
@@ -101,6 +88,16 @@ namespace FixALeak.API.Controllers
 
         }
 
+        [Route("{id:int}")]
+        [HttpPatch]
+        public IHttpActionResult Update(int id, IPrincipal user)
+        {
+
+            var result = _categoryService.Remove(id);
+
+            return Ok();
+
+        }
 
     }
 }

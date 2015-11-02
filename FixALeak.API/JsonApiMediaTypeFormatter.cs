@@ -79,8 +79,8 @@ namespace FixALeak.API
         {
             using (var reader = new StreamReader(readStream))
             {
-                //SerializerBuilder.Create().Deserialize<>
-                return null;
+                return SerializerBuilder.Create().Deserialize(reader.ReadToEnd(), type);
+                
             }
         }
     }

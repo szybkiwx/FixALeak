@@ -12,6 +12,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web.Http.Results;
+using System.Web.Http.Routing;
 
 namespace FixALeak.API.Tests
 {
@@ -19,43 +20,25 @@ namespace FixALeak.API.Tests
     public class CategoryLeafControllerTest
     {
         private Mock<ICategoryLeafService> _categoryLeafService;
+        private Mock<ICategoryService> _categoryService;
+        private Mock<UrlHelper> _urlHelper;
 
         private CategoryLeafController sut;
 
         [TestInitialize]
         public void SetUp()
         {
+            _urlHelper = new Mock<UrlHelper>();
             _categoryLeafService = new Mock<ICategoryLeafService>();
-            sut = new CategoryLeafController(_categoryLeafService.Object);
+            _categoryService = new Mock<ICategoryService>();
+            sut = new CategoryLeafController(_categoryLeafService.Object, _categoryService.Object);
+            sut.Url = _urlHelper.Object;
 
         }
 
         [TestMethod]
         public void TestAdd_WhenCategoryLeafDoesntExist_CategoryLeafeAdded()
         {
-            var postData = @"{
-                ""data"": {
-                    ""type"": ""categoryleaves"",
-                    ""attributes"": {
-                        ""name"": ""test upload""
-                    },
-                    ""relationships"" : {
-                        ""category"": {
-                            ""type"" : ""categories"", 
-                            ""id"" : 5
-                        }
-                    }
-                }
-            }";
-
-
-            var request = new RequestMessageBuilder()
-                .WithAbsoluteUrl("http://localhost/api/categories/12/categoryleavesy")
-                .WithMethod(HttpMethod.Post)
-                .WithBody(postData)
-                .Build();
-
-
             _categoryLeafService.Setup(x => x.GetCategoryLeaves(5)).Returns(new List<CategoryLeaf>()
             {
                 new CategoryLeaf()
@@ -71,61 +54,97 @@ namespace FixALeak.API.Tests
                 CategoryID = 5
             };
 
-            CategoryLeaf expectedCatLeaf = null;
+
+
+            CategoryLeaf expectedCatLeaf = new CategoryLeaf()
+            {
+                ID = 12,
+                Name = "test upload",
+                CategoryID = 5
+            };
 
             _categoryLeafService
                 .Setup(x => x.Add(It.IsAny<CategoryLeaf>()))
-                .Callback((CategoryLeaf c) => { expectedCatLeaf = c; })
                 .Returns((CategoryLeaf c) => { c.ID = 12; return c; });
 
 
 
             var userId = Guid.NewGuid();
 
-            var response = sut.Add(request, FakeUserFactory.NewFakeUser(userId, ""));
+
+            _urlHelper.Setup(x => x.Link("GetCategoryLeaf", It.IsAny<object>())).Returns("http://localhost/api/categoryleaves/12");
+            _categoryService.Setup(x => x.Get(5)).Returns(new Category() { });
+
+            var response = sut.Add(cat, FakeUserFactory.NewFakeUser(userId, ""));
 
             _categoryLeafService.Verify(x => x.Add(It.IsAny<CategoryLeaf>()));
 
             Assert.AreEqual(5, expectedCatLeaf.CategoryID);
 
-            Assert.IsInstanceOfType(response, typeof(ResponseMessageResult));
-            Assert.AreEqual(HttpStatusCode.Created, ((ResponseMessageResult)response).Response.StatusCode);
+            Assert.IsInstanceOfType(response, typeof(CreatedNegotiatedContentResult<CategoryLeaf>));
         }
 
         [TestMethod]
-        public void TestAdd_WhenCategorLeafyExists_CategoryLeafAdded()
+        public void TestAdd_WhenCategoryLeafDoesntExistAndCategoryDoesntExist_CategoryLeafeAdded()
         {
-            var postData = @"{
-                ""data"": {
-                    ""type"": ""categories"",
-                    ""attributes"": {
-                        ""name"": ""test upload""
-                    },
-                    ""relationships"" : {
-                        ""category"": {
-                            ""type"" : ""categories"", 
-                            ""id"" : 5
-                        }
-                    }
+            _categoryLeafService.Setup(x => x.GetCategoryLeaves(5)).Returns(new List<CategoryLeaf>()
+            {
+                new CategoryLeaf()
+                {
+                    Name = "xyz"
                 }
-            }";
+            });
+
+
+            CategoryLeaf cat = new CategoryLeaf()
+            {
+                Name = "test upload",
+                CategoryID = 5
+            };
+
+
+
+            CategoryLeaf expectedCatLeaf = new CategoryLeaf()
+            {
+                ID = 12,
+                Name = "test upload",
+                CategoryID = 5
+            };
+
+            _categoryLeafService
+                .Setup(x => x.Add(It.IsAny<CategoryLeaf>()))
+                .Returns((CategoryLeaf c) => { c.ID = 12; return c; });
+
+
 
             var userId = Guid.NewGuid();
 
-            var request = new RequestMessageBuilder()
-                .WithAbsoluteUrl("http://localhost/api/categories/12/categoryleavesy")
-                .WithMethod(HttpMethod.Post)
-                .WithBody(postData)
-                .Build();
 
+            _urlHelper.Setup(x => x.Link("GetCategoryLeaf", It.IsAny<object>())).Returns("http://localhost/api/categoryleaves/12");
+            _categoryService.Setup(x => x.Get(5)).Returns<Category>(null);
 
-           
+            var response = sut.Add(cat, FakeUserFactory.NewFakeUser(userId, ""));
+
+            _categoryLeafService.Verify(x => x.Add(It.IsAny<CategoryLeaf>()), Times.Never());
+
+            Assert.AreEqual(5, expectedCatLeaf.CategoryID);
+
+            Assert.IsInstanceOfType(response, typeof(BadRequestErrorMessageResult));
+        }
+
+        [TestMethod]
+        public void TestAdd_WhenCategorLeafyExists_ConfilctReturned()
+        {
+            var userId = Guid.NewGuid();
+
             _categoryLeafService.Setup(x => x.Exists(5, "test upload")).Returns(true);
-
-            var response = sut.Add(request, FakeUserFactory.NewFakeUser(userId, ""));
-
-            Assert.IsInstanceOfType(response, typeof(ResponseMessageResult));
-            Assert.AreEqual(HttpStatusCode.Conflict, ((ResponseMessageResult)response).Response.StatusCode);
+            CategoryLeaf cat = new CategoryLeaf()
+            {
+                Name = "test upload",
+                CategoryID = 5
+            };
+            var response = sut.Add(cat, FakeUserFactory.NewFakeUser(userId, ""));
+            Assert.IsInstanceOfType(response, typeof(ConflictResult));
         }
         
 
@@ -134,9 +153,9 @@ namespace FixALeak.API.Tests
         {
 
             var userId = Guid.NewGuid();
-            _categoryLeafService.Setup(x => x.Get(12)).Returns(new CategoryLeaf()
+            var expected = new CategoryLeaf()
             {
-                
+
                 ID = 12,
                 Name = "xyz",
                 CategoryID = 5,
@@ -149,28 +168,11 @@ namespace FixALeak.API.Tests
                         ID = 18
                     }
                 }
-            });
-
- 
+            };
+            _categoryLeafService.Setup(x => x.Get(12)).Returns(expected);
             var response = sut.Get(12, FakeUserFactory.NewFakeUser(userId, ""), "");
-            
-            var result = ((ResponseMessageResult)response).Response;
-            Assert.AreEqual(HttpStatusCode.OK, result.StatusCode);
-            var content = result.Content.ReadAsStringAsync().Result;
-
-            var root = JToken.Parse(content);
-            var data = root["data"];
-            Assert.AreEqual("categoryleaves", data["type"]);
-            Assert.AreEqual(12, data["id"]);
-
-            var attributes = data["attributes"];
-            Assert.AreEqual("xyz", attributes["name"]);
-           
-            var relationships = data["relationships"];
-            var expenses = relationships["expenses"]["data"];
-            Assert.AreEqual(18, expenses[0]["id"]);
-            Assert.AreEqual("expenses", expenses[0]["type"]);
-
+            Assert.IsInstanceOfType(response, typeof(OkNegotiatedContentResult<CategoryLeaf>));
+            Assert.AreEqual(expected, ((OkNegotiatedContentResult<CategoryLeaf>)response).Content);
         }
 
         [TestMethod]
@@ -178,7 +180,7 @@ namespace FixALeak.API.Tests
         {
 
             var userId = Guid.NewGuid();
-            _categoryLeafService.Setup(x => x.Get(12)).Returns(new CategoryLeaf()
+            var expected = new CategoryLeaf()
             {
 
                 ID = 12,
@@ -193,21 +195,13 @@ namespace FixALeak.API.Tests
                         ID = 18
                     }
                 }
-            });
-
+            };
+            _categoryLeafService.Setup(x => x.GetWithIncludes(12, It.IsAny<string>())).Returns(expected);
 
             var response = sut.Get(12, FakeUserFactory.NewFakeUser(userId, ""), "expenses");
-
-            var result = ((ResponseMessageResult)response).Response;
-            Assert.AreEqual(HttpStatusCode.OK, result.StatusCode);
-            var content = result.Content.ReadAsStringAsync().Result;
-
-            var root = JToken.Parse(content);
-            var data = root["data"];
-            Assert.AreEqual("expenses", data["included"][0]["type"]);
-            Assert.AreEqual("18", data["included"][0]["id"]);
-
-
+            Assert.IsInstanceOfType(response, typeof(OkNegotiatedContentResult<CategoryLeaf>));
+            var result = (OkNegotiatedContentResult<CategoryLeaf>)response;
+            Assert.AreEqual(expected, result.Content);
         }
     }
 }

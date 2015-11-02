@@ -32,19 +32,19 @@ namespace FixALeak.JsonApiSerializer.Tests
                    ""somedouble"": 4.5
                 },
                 ""relationships"": {
-                  ""des"": {
-                    ""data"": { ""type"": ""deserializertestrelatedobject"", ""id"": 9 }
+                  ""deserializertestrelatedobject"": {
+                    ""data"": { ""type"": ""deserializertestrelatedobjects"", ""id"": 9 }
                   },
                   ""descollection"": {
                     ""data"": [
-                        { ""type"": ""deserializertestrelatedobject"", ""id"": 20 },
-                        { ""type"": ""deserializertestrelatedobject"", ""id"": 21 }
+                        { ""type"": ""deserializertestrelatedobjects"", ""id"": 20 },
+                        { ""type"": ""deserializertestrelatedobjects"", ""id"": 21 }
                     ]
                   },
                   ""descollection2"": {
                     ""data"": [
-                        { ""type"": ""deserializertestrelatedobject"", ""id"": 20 },
-                        { ""type"": ""deserializertestrelatedobject"", ""id"": 21 }
+                        { ""type"": ""deserializertestrelatedobjects"", ""id"": 20 },
+                        { ""type"": ""deserializertestrelatedobjects"", ""id"": 21 }
                     ]
                   },
                   ""descollection3"": {
@@ -76,10 +76,11 @@ namespace FixALeak.JsonApiSerializer.Tests
                 SomeFloat = 4.5f,
                 SomeDecimal = 4.5m,
                 SomeDouble = 4.5d,
-                Des = new DeserializerTestRelatedObject()
+                DeserializerTestRelatedObject = new DeserializerTestRelatedObject()
                 {
                     ID = 9
                 },
+                DeserializerTestRelatedObjectID = 9,
                 DesCollection = coll,
                 DesCollection2 = coll,
                 DesCollection3 = coll

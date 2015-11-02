@@ -23,7 +23,7 @@ namespace FixALeak.JsonApiSerializer.PropertySerializer
                 (prop, obj) => prop.PropertyType.IsClass && prop.PropertyType != typeof(string) && prop.GetValue(obj) != null,
                 propertySerializerAggregate.ValuePropertySerializer);
             _strategies.Add(
-                (prop, obj) => typeof(IEnumerable).IsAssignableFrom(prop.PropertyType) && prop.PropertyType != typeof(string),
+                (prop, obj) => prop.GetValue(obj) != null && typeof(IEnumerable).IsAssignableFrom(prop.PropertyType) && prop.PropertyType != typeof(string),
                 propertySerializerAggregate.CollectionPropertySerializer);
             _strategies.Add(
                 (prop, obj) => true, 

@@ -19,40 +19,37 @@ namespace FixALeak.API.Controllers
     public class CategoryLeafController : ApiController
     {
         private ICategoryLeafService _categoryLeafService;
+        private ICategoryService _categoryService;
 
-        public CategoryLeafController(ICategoryLeafService categoryLeafService)
+        public CategoryLeafController(ICategoryLeafService categoryLeafService, ICategoryService categoryService)
         {
             _categoryLeafService = categoryLeafService;
+            _categoryService = categoryService;
         }
 
 
         [Route("")]
         [HttpPost]
-        public IHttpActionResult Add(HttpRequestMessage request, IPrincipal user)
+        public IHttpActionResult Add(CategoryLeaf categoryLeaf, IPrincipal user)
         {
-
-            var serializer = SerializerBuilder.Create();
-            var content = request.Content.ReadAsStringAsync().Result;
-            var userId = Guid.Parse(user.Identity.GetUserId());
-            var categoryLeaf = serializer.Deserialize<CategoryLeaf>(content);
 
             if(_categoryLeafService.Exists(categoryLeaf.CategoryID, categoryLeaf.Name))
             {
-                var responseError = new HttpResponseMessage(HttpStatusCode.Conflict);
-                responseError.Content = new StringContent("Category Leaf exixsts");
-                return ResponseMessage(responseError);
+                return Conflict();
             }
 
-            //categoryLeaf.CategoryID = cat;
-            _categoryLeafService.Add(categoryLeaf);
+            if(_categoryService.Get(categoryLeaf.CategoryID) == null)
+            {
+                return BadRequest("Parent category does not exist");
+            }
 
-            var response = new HttpResponseMessage(HttpStatusCode.Created);
-            response.Content = new StringContent("Category Leaf created");
-            return ResponseMessage(response);
+            var created = _categoryLeafService.Add(categoryLeaf);
+
+            return Created(Url.Link("GetCategoryLeaf", new { id = created.ID }), created);
         }
 
 
-        [Route("{id:int}")]
+        [Route("{id:int}", Name="GetCategoryLeaf")]
         [HttpGet]
         public IHttpActionResult Get(int id, IPrincipal user, [FromUri] string include)
         {
@@ -68,9 +65,7 @@ namespace FixALeak.API.Controllers
 
             if (result != null)
             {
-                var response = new HttpResponseMessage(HttpStatusCode.OK);
-                response.Content = new StringContent(SerializerBuilder.Create().Serialize(result, include).ToString());
-                return ResponseMessage(response);
+                return Ok(result);
             }
 
             return NotFound();
@@ -81,7 +76,10 @@ namespace FixALeak.API.Controllers
         [HttpDelete]
         public IHttpActionResult Delete(int id, IPrincipal user)
         {
-            
+            if (_categoryLeafService.Get(id) == null)
+            {
+                return NotFound();
+            }
             var result = _categoryLeafService.Remove(id);
 
             return Ok();

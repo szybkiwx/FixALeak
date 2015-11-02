@@ -81,18 +81,36 @@ namespace FixALeak.JsonApiSerializer
         {
             {
                 var includes = new List<JObject>();
-                include.Split(',').ToList().ForEach(x =>
+                if (!string.IsNullOrWhiteSpace(include))
+                {
+                    include.Split(',').ToList().ForEach(toInclude =>
+                    {
+                        obj.GetType()
+                            .GetProperties()
+                            .Where(prop => prop.Name.ToLower() == toInclude)
+                            .ToList()
+                            .ForEach(prop =>
+                            {
+                                includes.AddRange(_propertySerializationContext.SerializeFull(obj, prop));
+
+                            });
+                    });
+                }
+                else
                 {
                     obj.GetType()
-                        .GetProperties()
-                        .Where(prop => prop.Name.ToLower() == x)
-                        .ToList()
-                        .ForEach(prop =>
-                        {
-                             includes.AddRange(_propertySerializationContext.SerializeFull(obj, prop));
-                            
-                        });
-                });
+                           .GetProperties()
+                           .Where(prop => prop.GetValue(obj) != null )
+                           //.Where(prop => !prop.PropertyType.IsPrimitive && prop.PropertyType != typeof(string))
+                           .Where(prop => prop.PropertyType.IsClass || prop.PropertyType.GetInterface("IEnumerable") != null)
+                           .Where(prop => prop.PropertyType != typeof(string))
+                           .ToList()
+                           .ForEach(prop =>
+                           {
+                               includes.AddRange(_propertySerializationContext.SerializeFull(obj, prop));
+
+                           });
+                }
 
                 return includes;
             }
@@ -144,9 +162,9 @@ namespace FixALeak.JsonApiSerializer
                                 prop.SetValue(resourceObject.Instance, relResourceObject.Instance);
                             }
                         }
-                        else if (rel.Name + "id" == propName)
+                        else if (rel.Name + "id" == propName && (prop.PropertyType == typeof(int) || prop.PropertyType == typeof(Guid)))
                         {
-                            prop.SetValue(resourceObject.Instance, Convert.ChangeType(rel.Value["id"], prop.PropertyType));
+                            prop.SetValue(resourceObject.Instance, Convert.ChangeType(rel.Value["data"]["id"].ToString(), prop.PropertyType));
                         }
                     };
                 });
@@ -160,59 +178,6 @@ namespace FixALeak.JsonApiSerializer
 
         {
             return Deserialize(json, typeof(T)) as T;
-            /*var rootNode = JObject.Parse(json);
-            var dataNode = rootNode["data"];
-            var resourceObject = _GetMainObject<T>(dataNode);
-            var relationships = dataNode["relationships"].AsEnumerable();
-            if (relationships != null)
-            {
-                typeof(T).GetProperties().ToList().ForEach(prop =>
-                {
-                    string propName = prop.Name.ToLower();
-                    foreach (var rel in relationships.Cast<JProperty>())
-                    {
-                        if (rel.Name == propName)
-                        {
-                            if (rel.Value["data"] is JArray)
-                            {
-
-                                if (prop.PropertyType.GetInterface("IEnumerable") != null)
-                                {
-                                    var instance = CollectionFactory.CreateCollectionInstance(prop.PropertyType);
-                                    Type genericType =  prop.PropertyType.GetGenericArguments()[0];
-                                    ((JArray)rel.Value["data"]).ToList().ForEach(collectionItem =>
-                                    {
-                                        var item = new OutResourceObject(collectionItem, genericType);
-                                        instance.Add(item.Instance);
-
-                                    });
-
-                                    prop.SetValue(resourceObject.Instance, instance, null);
-                                }
-                                else
-                                {
-                                    throw new CollectionTypeNotSupported();
-                                }
-                            }
-                            else if (prop.PropertyType.IsValueType)
-                            {
-                                prop.SetValue(resourceObject.Instance, Convert.ChangeType(dataNode["attributes"][propName].ToString(), prop.PropertyType));
-                            }
-                            else
-                            {
-                                var relResourceObject = new OutResourceObject(rel.Value["data"], prop.PropertyType);
-                                prop.SetValue(resourceObject.Instance, relResourceObject.Instance);
-                            }
-                        }
-                        else if (rel.Name + "id" == propName)
-                        {
-                            prop.SetValue(resourceObject.Instance, Convert.ChangeType(rel.Value["id"], prop.PropertyType));
-                        }
-                    };
-                });
-            }
-
-            return resourceObject.Instance as T;*/
         }
         
 

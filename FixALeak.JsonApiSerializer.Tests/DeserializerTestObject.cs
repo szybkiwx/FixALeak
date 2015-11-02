@@ -12,7 +12,8 @@ namespace FixALeak.JsonApiSerializer.Tests
         public float SomeFloat { get; set; }
         public decimal SomeDecimal { get; set; }
         public double SomeDouble { get; set; }
-        public DeserializerTestRelatedObject Des { get; set; }
+        public int DeserializerTestRelatedObjectID { get; set; }
+        public DeserializerTestRelatedObject DeserializerTestRelatedObject { get; set; }
         public IEnumerable<DeserializerTestRelatedObject> DesCollection { get; set; }
         public ICollection<DeserializerTestRelatedObject> DesCollection2 { get; set; }
         public IList<DeserializerTestRelatedObject> DesCollection3 { get; set; }
@@ -42,7 +43,8 @@ namespace FixALeak.JsonApiSerializer.Tests
             return _EqualsCollections(DesCollection, other.DesCollection) &&
                 _EqualsCollections(DesCollection2, other.DesCollection2) &&
                 _EqualsCollections(DesCollection3, other.DesCollection3) &&
-                Des.Equals(other.Des) &&
+                DeserializerTestRelatedObject.Equals(other.DeserializerTestRelatedObject) &&
+                DeserializerTestRelatedObjectID == other.DeserializerTestRelatedObjectID &&
                 ID == other.ID &&
                 Title == other.Title &&
                 Src == other.Src &&
@@ -58,7 +60,7 @@ namespace FixALeak.JsonApiSerializer.Tests
             hash = (hash * 7) + ID.GetHashCode();
             hash = (hash * 7) + Title  .GetHashCode();
             hash = (hash * 7) + Src.GetHashCode();
-            hash = (hash * 7) + Des.GetHashCode();
+            hash = (hash * 7) + DeserializerTestRelatedObject.GetHashCode();
             hash = (hash * 7) + SomeDecimal.GetHashCode();
             hash = (hash * 7) + SomeFloat.GetHashCode();
             hash = (hash * 7) + SomeDouble.GetHashCode();

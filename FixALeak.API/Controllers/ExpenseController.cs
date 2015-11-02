@@ -18,9 +18,12 @@ namespace FixALeak.API.Controllers
     {
         private IExpenseService _expenseService;
 
-        public ExpenseController(IExpenseService expenseService)
+        ICategoryLeafService _categoryLeafService;
+
+        public ExpenseController(IExpenseService expenseService, ICategoryLeafService categoryLeafService)
         {
             _expenseService = expenseService;
+            _categoryLeafService = categoryLeafService;
         }
 
         [Route("")]
@@ -32,36 +35,30 @@ namespace FixALeak.API.Controllers
             return Ok(serializer.Serialize(expenses));
         }
 
-        [Route("{id:int}")]
+        [Route("{id:int}", Name = "GetExpense")]
         [HttpGet]
-        public IHttpActionResult Get(int id, int leaf)
+        public IHttpActionResult Get(int id)
         {
-            var serializer = SerializerBuilder.Create();
             var expense = _expenseService.Get(id);
             if(expense == null)
             {
                 return NotFound();
             }
 
-            var response = new HttpResponseMessage(HttpStatusCode.OK);
-            response.Content = new StringContent(serializer.Serialize(expense).ToString());
-            return ResponseMessage(response);
+            return Ok(expense);
         }
 
         [Route("")]
         [HttpPost]
-        public IHttpActionResult Add(HttpRequestMessage request, int leaf)
+        public IHttpActionResult Add(Expense expense)
         {
-            var serializer = SerializerBuilder.Create();
-            var content = request.Content.ReadAsStringAsync().Result;
-            var expense = serializer.Deserialize<Expense>(content);
-
-            expense.CategoryLeafID = leaf;
+            if(_categoryLeafService.Get(expense.CategoryLeafID) == null)
+            {
+                return BadRequest("Category leaf does not exist");
+            }
            
             var created = _expenseService.Add(expense);
-            var response = new HttpResponseMessage(HttpStatusCode.Created);
-            response.Content = new StringContent(serializer.Serialize(created).ToString());
-            return ResponseMessage(response);
+            return Created(Url.Link("GetExpense", new { id = created.ID }), created);
         }
 
         [Route("{id:int}")]
@@ -69,6 +66,19 @@ namespace FixALeak.API.Controllers
         public IHttpActionResult Delete(int id, int leaf)
         {
             if(!_expenseService.Exists(id))
+            {
+                return NotFound();
+            }
+
+            _expenseService.Remove(id);
+            return Ok();
+        }
+
+        [Route("{id:int}")]
+        [HttpPatch]
+        public IHttpActionResult Update(int id, 
+        {
+            if (!_expenseService.Exists(id))
             {
                 return NotFound();
             }

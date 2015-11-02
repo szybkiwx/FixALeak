@@ -17,7 +17,7 @@ namespace FixALeak.JsonApiSerializer.PropertySerializer
 
         public IEnumerable<JObject> SerializeFull(object obj, PropertyInfo prop)
         {
-            throw null;
+            return null;
         }
     }
 }

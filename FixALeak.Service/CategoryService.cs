@@ -40,7 +40,7 @@ namespace FixALeak.Service
 
         public Category Get(int id)
         {
-            return _ctx.Categories.FirstOrDefault(x => x.ID == id);
+            return _ctx.Categories.Find(id);
         }
 
         public bool Exists(Guid userId, string name)
