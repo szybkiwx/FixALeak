@@ -58,6 +58,7 @@
     <Compile Include="CollectionTypeNotSupported.cs" />
     <Compile Include="IEntity.cs" />
     <Compile Include="ISingleObjectSerializer.cs" />
+    <Compile Include="JsonApiPatch.cs" />
     <Compile Include="OutResourceObject.cs" />
     <Compile Include="PropertySerializer\CollectionPropertySerializer.cs" />
     <Compile Include="PropertySerializer\IPropertySerializationContext.cs" />

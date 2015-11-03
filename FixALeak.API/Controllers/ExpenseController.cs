@@ -63,7 +63,7 @@ namespace FixALeak.API.Controllers
 
         [Route("{id:int}")]
         [HttpDelete]
-        public IHttpActionResult Delete(int id, int leaf)
+        public IHttpActionResult Delete(int id)
         {
             if(!_expenseService.Exists(id))
             {
@@ -76,14 +76,16 @@ namespace FixALeak.API.Controllers
 
         [Route("{id:int}")]
         [HttpPatch]
-        public IHttpActionResult Update(int id, 
+        public IHttpActionResult Update(int id, JsonApiPatch<Expense> expensePatch)
         {
-            if (!_expenseService.Exists(id))
+            var expense = _expenseService.Get(id);
+            if (expense == null)
             {
                 return NotFound();
             }
 
-            _expenseService.Remove(id);
+            expensePatch.Patch(expense);
+            _expenseService.Update(expense);
             return Ok();
         }
 

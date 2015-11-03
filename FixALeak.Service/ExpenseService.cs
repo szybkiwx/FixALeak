@@ -31,7 +31,7 @@ namespace FixALeak.Service
 
         public Expense Get(int id)
         {
-            return _ctx.Expenses.FirstOrDefault(x => x.ID == id);
+            return _ctx.Expenses.Find(id);
         }
 
         public IEnumerable<Expense> GetExpenses(int categoryLeafId)
@@ -45,6 +45,12 @@ namespace FixALeak.Service
             _ctx.Expenses.Remove(rem);
             _ctx.SaveChanges();
             return rem;
+        }
+
+        public void Update(Expense expense)
+        {
+            _ctx.Expenses.Attach(expense);
+            _ctx.SaveChanges();
         }
     }
 }

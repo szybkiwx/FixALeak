@@ -14,5 +14,6 @@ namespace FixALeak.Service
         IEnumerable<Expense> GetExpenses(int categoryLeafId);
         Expense Remove(int id);
         bool Exists(int id);
+        void Update(Expense expense);
     }
 }
