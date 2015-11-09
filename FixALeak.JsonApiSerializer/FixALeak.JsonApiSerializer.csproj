@@ -56,10 +56,19 @@
   <ItemGroup>
     <Compile Include="CollectionFactory.cs" />
     <Compile Include="CollectionTypeNotSupported.cs" />
+    <Compile Include="FullObjectSerialzier.cs" />
     <Compile Include="IEntity.cs" />
     <Compile Include="ISingleObjectSerializer.cs" />
     <Compile Include="JsonApiPatch.cs" />
     <Compile Include="OutResourceObject.cs" />
+    <Compile Include="PropertyDeserializer\CollectionPropertyDeserializer.cs" />
+    <Compile Include="PropertyDeserializer\IPorpertyDeserialziationContext.cs" />
+    <Compile Include="PropertyDeserializer\IPropertyDeserializer.cs" />
+    <Compile Include="PropertyDeserializer\KeyPropertyDeserializer.cs" />
+    <Compile Include="PropertyDeserializer\NullDeserializer.cs" />
+    <Compile Include="PropertyDeserializer\PorpertyDeserialziationContext.cs" />
+    <Compile Include="PropertyDeserializer\PropertyDeserilaizerAggregate.cs" />
+    <Compile Include="PropertyDeserializer\ValuePropertyDeserializer.cs" />
     <Compile Include="PropertySerializer\CollectionPropertySerializer.cs" />
     <Compile Include="PropertySerializer\IPropertySerializationContext.cs" />
     <Compile Include="PropertySerializer\IPropertySerializer.cs" />

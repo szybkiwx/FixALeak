@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using FixALeak.JsonApiSerializer.PropertyDeserializer;
 
 namespace FixALeak.JsonApiSerializer.Tests
 {
@@ -15,7 +16,13 @@ namespace FixALeak.JsonApiSerializer.Tests
         [TestInitialize]
         public void SetUp()
         {
-            sut = new Serializer(null, null);
+            var aggregate = new PropertyDeserilaizerAggregate() {
+                CollectionPropertySerializer = new CollectionPropertyDeserializer(),
+                RefPropertyDeserializer = new RefPropertyDeserializer(),
+                ValuePropertySerializer = new ValuePropertyDeserializer()
+            };
+            
+            sut = new Serializer(null, new PorpertyDeserialziationContext(aggregate), null);
         }
 
         [TestMethod]

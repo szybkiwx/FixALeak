@@ -4,16 +4,22 @@ using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json.Linq;
 using FixALeak.JsonApiSerializer.PropertySerializer;
+using FixALeak.JsonApiSerializer.PropertyDeserializer;
+
 namespace FixALeak.JsonApiSerializer
 {
     public class Serializer
     {
         private IPropertySerializationContext _propertySerializationContext;
+        private IPorpertyDeserialziationContext _propertyDeserializationContext;
         private ISingleObjectSerializer _singleObjectSerializer;
 
-        public Serializer(IPropertySerializationContext propertySerializationContext, ISingleObjectSerializer singleObjectSerializer)
+        public Serializer(IPropertySerializationContext propertySerializationContext,
+            IPorpertyDeserialziationContext propertyDeserializationContext,
+            ISingleObjectSerializer singleObjectSerializer)
         {
             _propertySerializationContext = propertySerializationContext;
+            _propertyDeserializationContext = propertyDeserializationContext;
             _singleObjectSerializer = singleObjectSerializer;
         }
 
@@ -69,7 +75,7 @@ namespace FixALeak.JsonApiSerializer
             Type type = obj.GetType();
 
             var serializedCollection = obj.GetType().GetProperties()
-                .Select(prop => _propertySerializationContext.Serialize(obj, prop))
+                .Select(prop => _propertySerializationContext.GetSerializer(obj, prop).Serialize(obj, prop))
                 .Where(x => x != null)
                 .GroupBy(x => x.Name)
                 .Select(g => g.First());
@@ -91,7 +97,7 @@ namespace FixALeak.JsonApiSerializer
                             .ToList()
                             .ForEach(prop =>
                             {
-                                includes.AddRange(_propertySerializationContext.SerializeFull(obj, prop));
+                                includes.AddRange(_propertySerializationContext.GetSerializer(obj, prop).SerializeFull(obj, prop));
 
                             });
                     });
@@ -107,7 +113,7 @@ namespace FixALeak.JsonApiSerializer
                            .ToList()
                            .ForEach(prop =>
                            {
-                               includes.AddRange(_propertySerializationContext.SerializeFull(obj, prop));
+                               includes.AddRange(_propertySerializationContext.GetSerializer(obj, prop).SerializeFull(obj, prop));
 
                            });
                 }
@@ -115,6 +121,11 @@ namespace FixALeak.JsonApiSerializer
                 return includes;
             }
         }
+
+       /* public JsonApiPatch<T> DeserializePatch(string json, Type returnType)
+        {
+
+        }*/
 
         public object Deserialize(string json, Type returnType)
         {
@@ -124,49 +135,32 @@ namespace FixALeak.JsonApiSerializer
             var relationships = dataNode["relationships"].AsEnumerable();
             if (relationships != null)
             {
-                returnType.GetProperties().ToList().ForEach(prop =>
+
+                var relationshipsByKey = relationships.Cast<JProperty>()
+                    .ToDictionary(x => x.Name, x => x);
+
+                var properties = returnType.GetProperties()
+                    .Where(x => relationshipsByKey.Keys.Contains(x.Name.ToLower())).ToList();
+
+                var idProperties = returnType.GetProperties()
+                    .Where(x => x.Name.ToLower().EndsWith("id"))
+                    .Where(x => relationshipsByKey.Keys.Contains(x.Name.ToLower().Replace("id", "")))
+                    .Where(x => x.PropertyType == typeof(int) || x.PropertyType == typeof(Guid));
+
+
+                idProperties.ToList().ForEach(prop =>
                 {
-                    string propName = prop.Name.ToLower();
-                    foreach (var rel in relationships.Cast<JProperty>())
-                    {
-                        if (rel.Name == propName)
-                        {
-                            if (rel.Value["data"] is JArray)
-                            {
+                    var rel = relationshipsByKey[prop.Name.ToLower().Replace("id", "")];
+                    prop.SetValue(resourceObject.Instance, Convert.ChangeType(rel.Value["data"]["id"].ToString(), prop.PropertyType));
+                });
 
-                                if (prop.PropertyType.GetInterface("IEnumerable") != null)
-                                {
-                                    var instance = CollectionFactory.CreateCollectionInstance(prop.PropertyType);
-                                    Type genericType = prop.PropertyType.GetGenericArguments()[0];
-                                    ((JArray)rel.Value["data"]).ToList().ForEach(collectionItem =>
-                                    {
-                                        var item = new OutResourceObject(collectionItem, genericType);
-                                        instance.Add(item.Instance);
+                properties.ToList().ForEach(prop =>
+                {
+                    var rel = relationshipsByKey[prop.Name.ToLower()];
+                    var deserializedObject =_propertyDeserializationContext.GetDeserializer(prop, rel).Deserialize(prop, rel, dataNode);
 
-                                    });
+                    prop.SetValue(resourceObject.Instance, deserializedObject, null);
 
-                                    prop.SetValue(resourceObject.Instance, instance, null);
-                                }
-                                else
-                                {
-                                    throw new CollectionTypeNotSupported();
-                                }
-                            }
-                            else if (prop.PropertyType.IsValueType)
-                            {
-                                prop.SetValue(resourceObject.Instance, Convert.ChangeType(dataNode["attributes"][propName].ToString(), prop.PropertyType));
-                            }
-                            else
-                            {
-                                var relResourceObject = new OutResourceObject(rel.Value["data"], prop.PropertyType);
-                                prop.SetValue(resourceObject.Instance, relResourceObject.Instance);
-                            }
-                        }
-                        else if (rel.Name + "id" == propName && (prop.PropertyType == typeof(int) || prop.PropertyType == typeof(Guid)))
-                        {
-                            prop.SetValue(resourceObject.Instance, Convert.ChangeType(rel.Value["data"]["id"].ToString(), prop.PropertyType));
-                        }
-                    };
                 });
             }
 

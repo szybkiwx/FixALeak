@@ -80,6 +80,10 @@ namespace FixALeak.JsonApiSerializer.Tests
 
         public override bool Equals(object obj)
         {
+            if (obj == null)
+            {
+                return false;
+            }
             var other = (DeserializerTestRelatedObject)obj;
             return ID == other.ID && Name == other.Name;
         }
