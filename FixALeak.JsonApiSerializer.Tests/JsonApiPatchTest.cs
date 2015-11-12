@@ -39,7 +39,7 @@ namespace FixALeak.JsonApiSerializer.Tests
 
 
         [TestMethod]
-        public void TestPatch()
+        public void TestPatch_SetProperty()
         {
             var test = new TestObject()
             {
@@ -67,10 +67,41 @@ namespace FixALeak.JsonApiSerializer.Tests
             patch.SetValue(t.GetProperty("Value"), 144.6m);
             patch.SetValue(t.GetProperty("TestRelatedObjectID"), 7);
 
+            patch.Patch(test);
 
-            /*patch.SetValue("name", "abc");
-            patch.SetValue("value", 144.6m);
-            patch.SetValue("testrelatedobjectid", 7);*/
+            Assert.AreEqual(expected, test);
+
+
+        }
+
+        [TestMethod]
+        public void TestPatch_SetLambda()
+        {
+            var test = new TestObject()
+            {
+                ID = 12,
+                Name = "xyz",
+                Value = 122.5m,
+                Foo = "Bar",
+                TestRelatedObjectID = 11
+            };
+
+            var expected = new TestObject()
+            {
+                ID = 12,
+                Name = "abc",
+                Value = 144.6m,
+                Foo = "Bar",
+                TestRelatedObjectID = 7
+
+            };
+
+            var patch = new JsonApiPatch<TestObject>();
+            Type t = typeof(TestObject);
+
+            patch.SetValue(x => x.Name, "abc");
+            patch.SetValue(x => x.Value, 144.6m);
+            patch.SetValue(x => x.TestRelatedObjectID, 7);
 
             patch.Patch(test);
 
@@ -78,6 +109,6 @@ namespace FixALeak.JsonApiSerializer.Tests
 
 
         }
-       
+
     }
 }

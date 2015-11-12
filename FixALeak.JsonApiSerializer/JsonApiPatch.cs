@@ -23,6 +23,20 @@ namespace FixALeak.JsonApiSerializer
             propertyMap.Add(property, value);
         }
 
+        public void SetValue(Expression<Func<T, object>> setter, object value)
+        {
+            Expression exp = setter.Body;
+            if (setter.Body.NodeType == ExpressionType.Convert || setter.Body.NodeType == ExpressionType.ConvertChecked)
+            {
+                var ue = setter.Body as UnaryExpression;
+                exp = ue.Operand;
+
+            }
+            var me = exp as MemberExpression;
+            var property = me.Member as PropertyInfo;
+            propertyMap.Add(property, value);
+        }
+
         public void Patch(T obj)
         {
             foreach (var kv in propertyMap)
