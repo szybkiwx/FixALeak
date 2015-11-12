@@ -10,7 +10,33 @@ namespace FixALeak.JsonApiSerializer
 {
     public class JsonApiPatch<T> where T : new()
     {
-        private Dictionary<string, object> propertyMap;
+        private Dictionary<PropertyInfo, object> propertyMap;
+
+        public JsonApiPatch()
+        {
+            propertyMap = new Dictionary<PropertyInfo, object>();
+        }
+
+
+        public void SetValue(PropertyInfo property, object value)
+        {
+            propertyMap.Add(property, value);
+        }
+
+        public void Patch(T obj)
+        {
+            foreach (var kv in propertyMap)
+            {
+                var property = typeof(T).GetProperties().FirstOrDefault(prop => prop.Name == kv.Key.Name);
+                if (property != null)
+                {
+                    property.SetValue(obj, kv.Value, null);
+                }
+
+            }
+        }
+
+        /*private Dictionary<string, object> propertyMap;
 
         public JsonApiPatch()
         {
@@ -34,6 +60,6 @@ namespace FixALeak.JsonApiSerializer
                 }     
             
             }
-        }
+        }*/
     }
 }

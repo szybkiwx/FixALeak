@@ -61,9 +61,16 @@ namespace FixALeak.JsonApiSerializer.Tests
             }; 
 
             var patch = new JsonApiPatch<TestObject>();
-            patch.SetValue("name", "abc");
+            Type t = typeof(TestObject);
+            
+            patch.SetValue(t.GetProperty("Name"), "abc");
+            patch.SetValue(t.GetProperty("Value"), 144.6m);
+            patch.SetValue(t.GetProperty("TestRelatedObjectID"), 7);
+
+
+            /*patch.SetValue("name", "abc");
             patch.SetValue("value", 144.6m);
-            patch.SetValue("testrelatedobjectid", 7);
+            patch.SetValue("testrelatedobjectid", 7);*/
 
             patch.Patch(test);
 

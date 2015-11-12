@@ -187,7 +187,9 @@ namespace FixALeak.JsonApiSerializer
                     string propName = prop.Name.ToLower();
                     if (attributes[propName] != null)
                     {
-                        prop.SetValue(resourceObject.Instance, Convert.ChangeType(attributes[propName].ToString(), prop.PropertyType));
+                        prop.SetValue(resourceObject.Instance, 
+                            Convert.ChangeType(attributes[propName].ToString(), prop.PropertyType), 
+                            null);
                     }
                 });
             }
