@@ -8,7 +8,8 @@ using System.Threading.Tasks;
 
 namespace FixALeak.JsonApiSerializer
 {
-    public class JsonApiPatch<T> where T : new()
+
+    public class JsonApiPatch
     {
         private Dictionary<PropertyInfo, object> propertyMap;
 
@@ -17,12 +18,27 @@ namespace FixALeak.JsonApiSerializer
             propertyMap = new Dictionary<PropertyInfo, object>();
         }
 
-
         public void SetValue(PropertyInfo property, object value)
         {
             propertyMap.Add(property, value);
         }
 
+        public void Patch(object obj)
+        {
+            foreach (var kv in propertyMap)
+            {
+                var property = obj.GetType().GetProperties().FirstOrDefault(prop => prop.Name == kv.Key.Name);
+                if (property != null)
+                {
+                    property.SetValue(obj, kv.Value, null);
+                }
+
+            }
+        }
+    }
+
+    public class JsonApiPatch<T> : JsonApiPatch where T : new()
+    {
         public void SetValue(Expression<Func<T, object>> setter, object value)
         {
             Expression exp = setter.Body;
@@ -34,46 +50,14 @@ namespace FixALeak.JsonApiSerializer
             }
             var me = exp as MemberExpression;
             var property = me.Member as PropertyInfo;
-            propertyMap.Add(property, value);
+            SetValue(property, value);
         }
 
         public void Patch(T obj)
         {
-            foreach (var kv in propertyMap)
-            {
-                var property = typeof(T).GetProperties().FirstOrDefault(prop => prop.Name == kv.Key.Name);
-                if (property != null)
-                {
-                    property.SetValue(obj, kv.Value, null);
-                }
-
-            }
+            base.Patch(obj);
         }
 
-        /*private Dictionary<string, object> propertyMap;
-
-        public JsonApiPatch()
-        {
-            propertyMap = new Dictionary<string, object>();
-        }
-
-
-        public void SetValue(string property, object value)
-        {
-            propertyMap.Add(property, value);
-        }
-
-        public void Patch(T obj)
-        {
-            foreach(var kv in propertyMap)
-            {
-                var property = typeof(T).GetProperties().FirstOrDefault(prop => prop.Name.ToLower() == kv.Key);
-                if(property != null)
-                {
-                    property.SetValue(obj, kv.Value, null);
-                }     
-            
-            }
-        }*/
+       
     }
 }

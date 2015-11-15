@@ -96,5 +96,127 @@ namespace FixALeak.JsonApiSerializer.Tests
             Assert.AreEqual(expected, result);
         }
 
+        [TestMethod]
+        public void Deserializer_DeserializePatchGeneric()
+        {
+            string value = @"{
+              ""data"": {
+                ""type"": ""deserializertestobject"",
+                ""attributes"": {
+                  ""title"": ""Die Erste Welt Probleme"",
+                  ""somefloat"": 4.5,
+
+                }
+              }
+            }";
+
+            var coll = new List<DeserializerTestRelatedObject>()
+                {
+                    new DeserializerTestRelatedObject()
+                    {
+                        ID=20
+                    },
+                    new DeserializerTestRelatedObject()
+                    {
+                        ID=21
+                    }
+                };
+
+            var original = new DeserializerTestObject()
+            {
+                Title = "Ember Hamster",
+                Src = "http://example.com/images/productivity.png",
+                SomeFloat = 1.5f,
+                SomeDecimal = 1.5m,
+                SomeDouble = 1.5d,
+                DeserializerTestRelatedObject = new DeserializerTestRelatedObject()
+                {
+                    ID = 9
+                },
+                DeserializerTestRelatedObjectID = 9,
+                DesCollection = coll,
+                DesCollection2 = coll,
+                DesCollection3 = coll
+            };
+
+            var expected = new DeserializerTestObject()
+            {
+                Title = "Die Erste Welt Probleme",
+                Src = "http://example.com/images/productivity.png",
+                SomeFloat = 4.5f,
+                SomeDecimal = 1.5m,
+                SomeDouble = 1.5d,
+                DeserializerTestRelatedObject = new DeserializerTestRelatedObject()
+                {
+                    ID = 9
+                },
+                DeserializerTestRelatedObjectID = 9,
+                DesCollection = coll,
+                DesCollection2 = coll,
+                DesCollection3 = coll
+            };
+            var patch = sut.DeserializePatch<DeserializerTestObject>(value);
+
+            patch.Patch(original);
+
+            Assert.AreEqual(expected, original);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(RelationshipUpdateForbiddenException))]
+        public void Deserializer_DeserializePatchGeneric_WhenRelationshipChanged_ThrowException()
+        {
+            string value = @"{
+              ""data"": {
+                ""type"": ""deserializertestobject"",
+                ""attributes"": {
+                  ""title"": ""Die Erste Welt Probleme"",
+                  ""somefloat"": 4.5,
+
+                },
+                ""relationships"": {
+                  ""deserializertestrelatedobject"": {
+                    ""data"": { ""type"": ""deserializertestrelatedobjects"", ""id"": 19 }
+                  }
+                }
+                
+              }
+            }";
+
+            var coll = new List<DeserializerTestRelatedObject>()
+                {
+                    new DeserializerTestRelatedObject()
+                    {
+                        ID=20
+                    },
+                    new DeserializerTestRelatedObject()
+                    {
+                        ID=21
+                    }
+                };
+
+            var original = new DeserializerTestObject()
+            {
+                Title = "Ember Hamster",
+                Src = "http://example.com/images/productivity.png",
+                SomeFloat = 1.5f,
+                SomeDecimal = 1.5m,
+                SomeDouble = 1.5d,
+                DeserializerTestRelatedObject = new DeserializerTestRelatedObject()
+                {
+                    ID = 9
+                },
+                DeserializerTestRelatedObjectID = 9,
+                DesCollection = coll,
+                DesCollection2 = coll,
+                DesCollection3 = coll
+            };
+
+          
+            var patch = sut.DeserializePatch<DeserializerTestObject>(value);
+        
+        }
+
+
     }
 }

@@ -5,6 +5,7 @@ using System.Linq;
 using Newtonsoft.Json.Linq;
 using FixALeak.JsonApiSerializer.PropertySerializer;
 using FixALeak.JsonApiSerializer.PropertyDeserializer;
+using System.Reflection;
 
 namespace FixALeak.JsonApiSerializer
 {
@@ -122,50 +123,90 @@ namespace FixALeak.JsonApiSerializer
             }
         }
 
-       /* public JsonApiPatch<T> DeserializePatch(string json, Type returnType)
+        public JsonApiPatch<T> DeserializePatch<T>(string json) where T : new()
         {
+            /*var patch = new JsonApiPatch<T>();
 
-        }*/
+            Deserialize(json, typeof(T), (prop, instance, value) =>
+            {
+                patch.SetValue(prop, value);
+            });
+
+            return patch;*/
+            var patch = new JsonApiPatch<T>();
+
+            var rootNode = JObject.Parse(json);
+            var dataNode = rootNode["data"];
+            var resourceObject = _GetMainObject(dataNode, typeof(T), (prop, instance, value) =>
+            {
+                patch.SetValue(prop, value);
+            });
+            var relationships = dataNode["relationships"];
+            if(relationships != null)
+            {
+                throw new RelationshipUpdateForbiddenException();
+            }
+            return patch;
+        }
+
+        public object DeserializePatch(string json, Type returnType)
+        {
+            throw new NotImplementedException();
+        }
 
         public object Deserialize(string json, Type returnType)
         {
+            return Deserialize(json, returnType, (prop, instance, value) =>
+            {
+                prop.SetValue(instance, value, null);
+            });
+
+        }
+
+        private object Deserialize(string json, Type returnType, Action<PropertyInfo, object, object> setter)
+        { 
             var rootNode = JObject.Parse(json);
             var dataNode = rootNode["data"];
-            var resourceObject = _GetMainObject(dataNode, returnType);
+            var resourceObject = _GetMainObject(dataNode, returnType, setter);
             var relationships = dataNode["relationships"].AsEnumerable();
             if (relationships != null)
             {
-
-                var relationshipsByKey = relationships.Cast<JProperty>()
-                    .ToDictionary(x => x.Name, x => x);
-
-                var properties = returnType.GetProperties()
-                    .Where(x => relationshipsByKey.Keys.Contains(x.Name.ToLower())).ToList();
-
-                var idProperties = returnType.GetProperties()
-                    .Where(x => x.Name.ToLower().EndsWith("id"))
-                    .Where(x => relationshipsByKey.Keys.Contains(x.Name.ToLower().Replace("id", "")))
-                    .Where(x => x.PropertyType == typeof(int) || x.PropertyType == typeof(Guid));
-
-
-                idProperties.ToList().ForEach(prop =>
-                {
-                    var rel = relationshipsByKey[prop.Name.ToLower().Replace("id", "")];
-                    prop.SetValue(resourceObject.Instance, Convert.ChangeType(rel.Value["data"]["id"].ToString(), prop.PropertyType));
-                });
-
-                properties.ToList().ForEach(prop =>
-                {
-                    var rel = relationshipsByKey[prop.Name.ToLower()];
-                    var deserializedObject =_propertyDeserializationContext.GetDeserializer(prop, rel).Deserialize(prop, rel, dataNode);
-
-                    prop.SetValue(resourceObject.Instance, deserializedObject, null);
-
-                });
+                _DeserializeRelationships(returnType, setter, dataNode, resourceObject, relationships);
             }
 
             return Convert.ChangeType(resourceObject.Instance, returnType);
-        } 
+        }
+
+        private void _DeserializeRelationships(Type returnType, Action<PropertyInfo, object, object> setter, JToken dataNode, OutResourceObject resourceObject, IEnumerable<JToken> relationships)
+        {
+            var relationshipsByKey = relationships.Cast<JProperty>()
+                                .ToDictionary(x => x.Name, x => x);
+
+            var properties = returnType.GetProperties()
+                .Where(x => relationshipsByKey.Keys.Contains(x.Name.ToLower())).ToList();
+
+            var idProperties = returnType.GetProperties()
+                .Where(x => x.Name.ToLower().EndsWith("id"))
+                .Where(x => relationshipsByKey.Keys.Contains(x.Name.ToLower().Replace("id", "")))
+                .Where(x => x.PropertyType == typeof(int) || x.PropertyType == typeof(Guid));
+
+
+            idProperties.ToList().ForEach(prop =>
+            {
+                var rel = relationshipsByKey[prop.Name.ToLower().Replace("id", "")];
+                //prop.SetValue(resourceObject.Instance, Convert.ChangeType(rel.Value["data"]["id"].ToString(), prop.PropertyType));
+                setter.Invoke(prop, resourceObject.Instance, Convert.ChangeType(rel.Value["data"]["id"].ToString(), prop.PropertyType));
+            });
+
+            properties.ToList().ForEach(prop =>
+            {
+                var rel = relationshipsByKey[prop.Name.ToLower()];
+                var deserializedObject = _propertyDeserializationContext.GetDeserializer(prop, rel).Deserialize(prop, rel, dataNode);
+
+                //prop.SetValue(resourceObject.Instance, deserializedObject, null);
+                setter.Invoke(prop, resourceObject.Instance, deserializedObject);
+            });
+        }
 
         public T Deserialize<T>(string json)
                 where T : class, new()
@@ -175,7 +216,7 @@ namespace FixALeak.JsonApiSerializer
         }
         
 
-        private OutResourceObject _GetMainObject(JToken dataNode, Type returnType)
+        private OutResourceObject _GetMainObject(JToken dataNode, Type returnType, Action<PropertyInfo, object, object> setter)
         {
             var resourceObject = new OutResourceObject(dataNode, returnType);
 
@@ -187,9 +228,11 @@ namespace FixALeak.JsonApiSerializer
                     string propName = prop.Name.ToLower();
                     if (attributes[propName] != null)
                     {
-                        prop.SetValue(resourceObject.Instance, 
+
+                        setter.Invoke(prop, resourceObject.Instance, Convert.ChangeType(attributes[propName].ToString(), prop.PropertyType));
+                        /*prop.SetValue(resourceObject.Instance, 
                             Convert.ChangeType(attributes[propName].ToString(), prop.PropertyType), 
-                            null);
+                            null);*/
                     }
                 });
             }
