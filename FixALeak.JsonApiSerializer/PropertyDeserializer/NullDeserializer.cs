@@ -1,6 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
 using System.Reflection;
-using Newtonsoft.Json.Linq;
 
 namespace FixALeak.JsonApiSerializer.PropertyDeserializer
 {

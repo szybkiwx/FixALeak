@@ -1,10 +1,10 @@
-﻿using System;
+﻿using FixALeak.JsonApiSerializer.PropertyDeserializer;
+using FixALeak.JsonApiSerializer.PropertySerializer;
+using Newtonsoft.Json.Linq;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Newtonsoft.Json.Linq;
-using FixALeak.JsonApiSerializer.PropertySerializer;
-using FixALeak.JsonApiSerializer.PropertyDeserializer;
 using System.Reflection;
 
 namespace FixALeak.JsonApiSerializer
@@ -125,14 +125,6 @@ namespace FixALeak.JsonApiSerializer
 
         public JsonApiPatch<T> DeserializePatch<T>(string json) where T : new()
         {
-            /*var patch = new JsonApiPatch<T>();
-
-            Deserialize(json, typeof(T), (prop, instance, value) =>
-            {
-                patch.SetValue(prop, value);
-            });
-
-            return patch;*/
             var patch = new JsonApiPatch<T>();
 
             var rootNode = JObject.Parse(json);
@@ -194,7 +186,6 @@ namespace FixALeak.JsonApiSerializer
             idProperties.ToList().ForEach(prop =>
             {
                 var rel = relationshipsByKey[prop.Name.ToLower().Replace("id", "")];
-                //prop.SetValue(resourceObject.Instance, Convert.ChangeType(rel.Value["data"]["id"].ToString(), prop.PropertyType));
                 setter.Invoke(prop, resourceObject.Instance, Convert.ChangeType(rel.Value["data"]["id"].ToString(), prop.PropertyType));
             });
 
@@ -203,7 +194,6 @@ namespace FixALeak.JsonApiSerializer
                 var rel = relationshipsByKey[prop.Name.ToLower()];
                 var deserializedObject = _propertyDeserializationContext.GetDeserializer(prop, rel).Deserialize(prop, rel, dataNode);
 
-                //prop.SetValue(resourceObject.Instance, deserializedObject, null);
                 setter.Invoke(prop, resourceObject.Instance, deserializedObject);
             });
         }
