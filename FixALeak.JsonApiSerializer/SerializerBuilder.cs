@@ -1,4 +1,5 @@
-﻿using FixALeak.JsonApiSerializer.PropertySerializer;
+﻿using FixALeak.JsonApiSerializer.PropertyDeserializer;
+using FixALeak.JsonApiSerializer.PropertySerializer;
 using Microsoft.Practices.Unity;
 using System;
 
@@ -27,6 +28,7 @@ namespace FixALeak.JsonApiSerializer
             container.RegisterType<NullSerializer>();
             container.RegisterType<PropertySerializerAggregate>();
             container.RegisterType<IPropertySerializationContext, PropertySerializationContext>();
+            container.RegisterType<IPorpertyDeserialziationContext, PorpertyDeserialziationContext>();
             container.RegisterType<ISingleObjectSerializer, SingleObjectSerializer>(); 
         }
     }

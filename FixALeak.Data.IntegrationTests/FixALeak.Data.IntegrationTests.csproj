@@ -65,6 +65,10 @@
       <Project>{d462f7e6-9dbf-47eb-afdf-c6b4b3305c5f}</Project>
       <Name>FixALeak.Data</Name>
     </ProjectReference>
+    <ProjectReference Include="..\FixALeak.JsonApiSerializer\FixALeak.JsonApiSerializer.csproj">
+      <Project>{e6aee942-ab0b-43ff-9d8c-a0addc6a4e06}</Project>
+      <Name>FixALeak.JsonApiSerializer</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

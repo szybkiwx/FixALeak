@@ -96,6 +96,44 @@ namespace FixALeak.JsonApiSerializer.Tests
             Assert.AreEqual(expected, result);
         }
 
+
+        [TestMethod]
+        [ExpectedException(typeof(MalformedJsonApiDocumentException))]
+        public void Deserializer_Deserialize_MissingData_ThrowException1()
+        {
+            string value = @"{
+              ""datsra"": {
+                ""type"": ""deserializertestobject"",
+                ""attributes"": {
+                  ""title"": ""Die Erste Welt Probleme"",
+                  ""somefloat"": 4.5,
+
+                }
+              }
+            }";
+
+            sut.Deserialize<DeserializerTestObject>(value);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(MalformedJsonApiDocumentException))]
+        public void Deserializer_Deserialize_MissingData_ThrowException2()
+        {
+            string value = @"{
+              ""Data"": {
+                ""type"": ""deserializertestobject"",
+                ""attributes"": {
+                  ""title"": ""Die Erste Welt Probleme"",
+                  ""somefloat"": 4.5,
+
+                }
+              }
+            }";
+
+            sut.Deserialize<DeserializerTestObject>(value);
+        }
+
+
         [TestMethod]
         public void Deserializer_DeserializePatchGeneric()
         {
@@ -156,6 +194,76 @@ namespace FixALeak.JsonApiSerializer.Tests
                 DesCollection3 = coll
             };
             var patch = sut.DeserializePatch<DeserializerTestObject>(value);
+
+            patch.Patch(original);
+
+            Assert.AreEqual(expected, original);
+        }
+
+        [TestMethod]
+        public void Deserializer_DeserializePatch()
+        {
+            string value = @"{
+              ""data"": {
+                ""type"": ""deserializertestobject"",
+                ""attributes"": {
+                  ""title"": ""Die Erste Welt Probleme"",
+                  ""somefloat"": 4.5,
+
+                }
+              }
+            }";
+
+            var coll = new List<DeserializerTestRelatedObject>()
+                {
+                    new DeserializerTestRelatedObject()
+                    {
+                        ID=20
+                    },
+                    new DeserializerTestRelatedObject()
+                    {
+                        ID=21
+                    }
+                };
+
+            var original = new DeserializerTestObject()
+            {
+                Title = "Ember Hamster",
+                Src = "http://example.com/images/productivity.png",
+                SomeFloat = 1.5f,
+                SomeDecimal = 1.5m,
+                SomeDouble = 1.5d,
+                DeserializerTestRelatedObject = new DeserializerTestRelatedObject()
+                {
+                    ID = 9
+                },
+                DeserializerTestRelatedObjectID = 9,
+                DesCollection = coll,
+                DesCollection2 = coll,
+                DesCollection3 = coll
+            };
+
+            var expected = new DeserializerTestObject()
+            {
+                Title = "Die Erste Welt Probleme",
+                Src = "http://example.com/images/productivity.png",
+                SomeFloat = 4.5f,
+                SomeDecimal = 1.5m,
+                SomeDouble = 1.5d,
+                DeserializerTestRelatedObject = new DeserializerTestRelatedObject()
+                {
+                    ID = 9
+                },
+                DeserializerTestRelatedObjectID = 9,
+                DesCollection = coll,
+                DesCollection2 = coll,
+                DesCollection3 = coll
+            };
+            var result = sut.DeserializePatch(value, typeof(DeserializerTestObject));
+
+            Assert.IsInstanceOfType(result, typeof(JsonApiPatch<DeserializerTestObject>));
+
+            var patch = (JsonApiPatch<DeserializerTestObject>)result;
 
             patch.Patch(original);
 

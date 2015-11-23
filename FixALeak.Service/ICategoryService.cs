@@ -15,6 +15,7 @@ namespace FixALeak.Service
         Category Get(int id);
         bool Exists(Guid userId, string name);
         Category Remove(int id);
+        void Update(Category cat);
         //void DeleteCategory(int id);       
     }
 }

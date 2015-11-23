@@ -83,6 +83,10 @@
       <Project>{D462F7E6-9DBF-47EB-AFDF-C6B4B3305C5F}</Project>
       <Name>FixALeak.Data</Name>
     </ProjectReference>
+    <ProjectReference Include="..\FixALeak.JsonApiSerializer\FixALeak.JsonApiSerializer.csproj">
+      <Project>{e6aee942-ab0b-43ff-9d8c-a0addc6a4e06}</Project>
+      <Name>FixALeak.JsonApiSerializer</Name>
+    </ProjectReference>
     <ProjectReference Include="..\FixALeak.Service\FixALeak.Service.csproj">
       <Project>{0fc5cfd6-171f-45d3-ab45-e3586b45e125}</Project>
       <Name>FixALeak.Service</Name>

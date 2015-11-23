@@ -143,7 +143,30 @@ namespace FixALeak.JsonApiSerializer
 
         public object DeserializePatch(string json, Type returnType)
         {
-            throw new NotImplementedException();
+            var patchType = typeof(JsonApiPatch<>);
+            var constructedPatchType = patchType.MakeGenericType(returnType);
+
+            var patch = Activator.CreateInstance(constructedPatchType);
+
+            var rootNode = JObject.Parse(json);
+            var dataNode = rootNode["data"];
+
+            var mi = constructedPatchType.GetMethods()
+                    .Where(x => x.Name == "SetValue" && x.GetParameters()
+                        .Any(y => y.ParameterType == typeof(PropertyInfo))
+                    )
+                    .First();
+            var resourceObject = _GetMainObject(dataNode, returnType, (prop, instance, value) =>
+            {
+                mi.Invoke(patch, new object[] { prop, value });
+
+            });
+            var relationships = dataNode["relationships"];
+            if (relationships != null)
+            {
+                throw new RelationshipUpdateForbiddenException();
+            }
+            return patch;
         }
 
         public object Deserialize(string json, Type returnType)
@@ -156,9 +179,15 @@ namespace FixALeak.JsonApiSerializer
         }
 
         private object Deserialize(string json, Type returnType, Action<PropertyInfo, object, object> setter)
-        { 
+        {
             var rootNode = JObject.Parse(json);
             var dataNode = rootNode["data"];
+            if(dataNode == null)
+            {
+                throw new MalformedJsonApiDocumentException("Missing \"data\" node");
+            }
+
+
             var resourceObject = _GetMainObject(dataNode, returnType, setter);
             var relationships = dataNode["relationships"].AsEnumerable();
             if (relationships != null)

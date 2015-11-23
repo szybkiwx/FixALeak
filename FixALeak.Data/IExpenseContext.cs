@@ -15,5 +15,7 @@ namespace FixALeak.Data
         DbSet<Category> Categories { get; set; }
         DbSet<CategoryLeaf> CategoryLeaves { get; set; }
         void SaveChanges();
+        DbEntityEntry Entry(object entity);
+        DbEntityEntry<TEntity> Entry<TEntity>(TEntity entity) where TEntity : class;
     }
 }

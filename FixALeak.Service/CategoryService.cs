@@ -56,5 +56,11 @@ namespace FixALeak.Service
            _ctx.SaveChanges();
            return rem;
         }
+
+        public void Update(Category cat)
+        {
+            _ctx.Entry(cat).State = EntityState.Modified;
+            _ctx.SaveChanges();
+        }
     }
 }

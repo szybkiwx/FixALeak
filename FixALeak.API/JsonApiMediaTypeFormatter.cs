@@ -26,7 +26,12 @@ namespace FixALeak.API
             return type.GetInterface("IEnumerable") != null 
                 && generics.Length > 0 
                 && generics[0].GetInterface("IEntity") != null;
-        }            
+        }       
+        
+        private bool IsPatch(Type type)
+        {
+            return type == typeof(JsonApiPatch) || type.BaseType == typeof(JsonApiPatch);
+        }     
 
         public override bool CanReadType(Type type)
         {
@@ -36,6 +41,11 @@ namespace FixALeak.API
             }
 
             if (isEntityCollection(type))
+            {
+                return true;
+            }
+
+            if(IsPatch(type))
             {
                 return true;
             }
@@ -77,8 +87,15 @@ namespace FixALeak.API
 
         public override object ReadFromStream(Type type, Stream readStream, HttpContent content, IFormatterLogger formatterLogger)
         {
+
             using (var reader = new StreamReader(readStream))
             {
+
+                if (IsPatch(type))
+                {
+                    return SerializerBuilder.Create().DeserializePatch(reader.ReadToEnd(), type);
+                }
+
                 return SerializerBuilder.Create().Deserialize(reader.ReadToEnd(), type);
                 
             }

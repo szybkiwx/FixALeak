@@ -14,6 +14,7 @@ using System.Web.Http.Results;
 using System.Net;
 using Newtonsoft.Json.Linq;
 using System.Web.Http.Routing;
+using FixALeak.JsonApiSerializer;
 
 namespace FixALeak.API.Tests
 {
@@ -108,5 +109,63 @@ namespace FixALeak.API.Tests
             Assert.AreEqual(expected, ((OkNegotiatedContentResult<Category>)response).Content);
 
         }
+
+        [TestMethod]
+        public void TestUpdate()
+        {
+
+            var userId = Guid.NewGuid();
+            var toUpdate = new Category()
+            {
+                ID = 12,
+                Name = "xyz",
+                UserId = userId
+            };
+
+            var expected = new Category()
+            {
+                ID = 12,
+                Name = "abc",
+                UserId = userId
+            };
+
+            _categoryService.Setup(x => x.Get(12)).Returns(
+                toUpdate
+            );
+
+            //_categoryService.Setup(x => x.Update(expected)).
+
+            var patch = new JsonApiPatch<Category>();
+            patch.SetValue(x => x.Name, "abc");
+
+            var response = sut.Update(12, patch, FakeUserFactory.NewFakeUser(userId, ""));
+
+            Assert.IsInstanceOfType(response, typeof(OkNegotiatedContentResult<Category>));
+            Assert.AreEqual(expected, ((OkNegotiatedContentResult<Category>)response).Content);
+
+        }
+
+        [TestMethod]
+        public void TestDelete()
+        {
+
+            var userId = Guid.NewGuid();
+            var toRemove = new Category()
+            {
+                ID = 12,
+                Name = "xyz",
+                UserId = userId
+            };
+            _categoryService.Setup(x => x.Remove(12)).Returns(
+                toRemove
+            );
+
+            var response = sut.Delete(12, FakeUserFactory.NewFakeUser(userId, ""));
+
+            Assert.IsInstanceOfType(response, typeof(OkNegotiatedContentResult<Category>));
+            Assert.AreEqual(toRemove, ((OkNegotiatedContentResult<Category>)response).Content);
+
+        }
+
     }
 }

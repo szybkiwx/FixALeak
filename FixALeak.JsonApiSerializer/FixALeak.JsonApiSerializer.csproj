@@ -60,6 +60,7 @@
     <Compile Include="IEntity.cs" />
     <Compile Include="ISingleObjectSerializer.cs" />
     <Compile Include="JsonApiPatch.cs" />
+    <Compile Include="MalformedJsonApiDocumentException.cs" />
     <Compile Include="OutResourceObject.cs" />
     <Compile Include="PropertyDeserializer\CollectionPropertyDeserializer.cs" />
     <Compile Include="PropertyDeserializer\IPorpertyDeserialziationContext.cs" />

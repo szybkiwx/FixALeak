@@ -11,7 +11,7 @@ using Microsoft.AspNet.Identity;
 using FixALeak.Data.Entities;
 
 using System.Security.Principal;
-
+using FixALeak.JsonApiSerializer;
 
 namespace FixALeak.API.Controllers
 {
@@ -28,7 +28,7 @@ namespace FixALeak.API.Controllers
 
         [Route("")]
         [HttpGet]
-        public IHttpActionResult GetCategories([FromUri] string include, IPrincipal user)
+        public IHttpActionResult GetCategories(IPrincipal user, [FromUri] string include = "")
         {
 
             try
@@ -84,18 +84,20 @@ namespace FixALeak.API.Controllers
 
             var result = _categoryService.Remove(id);
 
-            return Ok();
+            return Ok(result);
 
         }
 
         [Route("{id:int}")]
         [HttpPatch]
-        public IHttpActionResult Update(int id, IPrincipal user)
+        public IHttpActionResult Update(int id, JsonApiPatch<Category> patch, IPrincipal user)
         {
+            var categoryToUpdate = _categoryService.Get(12);
+            patch.Patch(categoryToUpdate);
 
-            var result = _categoryService.Remove(id);
+            _categoryService.Update(categoryToUpdate);
 
-            return Ok();
+            return Ok(categoryToUpdate);
 
         }
 

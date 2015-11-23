@@ -23,6 +23,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{3ED327D1
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FixALeak.API.Tests", "FixALeak.API.Tests\FixALeak.API.Tests.csproj", "{6F9FD5AD-C8FD-4809-8CBC-981EECA1BAF1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FixALeak.API.IntegrationTests", "FixALeak.API.IntegrationTests\FixALeak.API.IntegrationTests.csproj", "{E095574F-45BF-4A62-B6F7-946B1D537348}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -65,11 +67,16 @@ Global
 		{6F9FD5AD-C8FD-4809-8CBC-981EECA1BAF1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6F9FD5AD-C8FD-4809-8CBC-981EECA1BAF1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6F9FD5AD-C8FD-4809-8CBC-981EECA1BAF1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E095574F-45BF-4A62-B6F7-946B1D537348}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E095574F-45BF-4A62-B6F7-946B1D537348}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E095574F-45BF-4A62-B6F7-946B1D537348}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E095574F-45BF-4A62-B6F7-946B1D537348}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{6F9FD5AD-C8FD-4809-8CBC-981EECA1BAF1} = {3ED327D1-D48F-487A-AFB2-2A228A1BE6D7}
+		{E095574F-45BF-4A62-B6F7-946B1D537348} = {3ED327D1-D48F-487A-AFB2-2A228A1BE6D7}
 	EndGlobalSection
 EndGlobal
