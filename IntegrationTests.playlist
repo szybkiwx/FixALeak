@@ -1,0 +1,1 @@
+<Playlist Version="1.0"><Add Test="FixALeak.API.IntegrationTests.CategoryCRUD.TestMethod1" /><Add Test="FixALeak.API.IntegrationTests.CategoryCRUD.Test_AddCategory" /></Playlist>
