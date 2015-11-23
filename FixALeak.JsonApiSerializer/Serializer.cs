@@ -142,7 +142,7 @@ namespace FixALeak.JsonApiSerializer
         }
 
         public object DeserializePatch(string json, Type returnType)
-        {
+                                                                                                                                         {
             var patchType = typeof(JsonApiPatch<>);
             var constructedPatchType = patchType.MakeGenericType(returnType);
 

@@ -93,7 +93,7 @@ namespace FixALeak.API
 
                 if (IsPatch(type))
                 {
-                    return SerializerBuilder.Create().DeserializePatch(reader.ReadToEnd(), type);
+                    return SerializerBuilder.Create().DeserializePatch(reader.ReadToEnd(), type.GetGenericArguments()[0]);
                 }
 
                 return SerializerBuilder.Create().Deserialize(reader.ReadToEnd(), type);

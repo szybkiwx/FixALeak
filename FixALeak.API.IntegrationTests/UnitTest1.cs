@@ -70,5 +70,18 @@ namespace FixALeak.API.IntegrationTests
             var result = JsonConvert.DeserializeObject<Dictionary<string, string>>(responseBody);
             _token = result["access_token"];
         }
+
+        public void Register(string username, string password)
+        {
+            _webClient.Headers[HttpRequestHeader.ContentType] = "application/json";
+            string data = JsonConvert.SerializeObject(
+                new UserModel()
+                {
+                    UserName = username,
+                    Password = password,
+                    ConfirmPassword = password
+                });
+            _webClient.UploadString("/api/Account", data);
+        }
     }
 }

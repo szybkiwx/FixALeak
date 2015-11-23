@@ -92,7 +92,7 @@ namespace FixALeak.API.Controllers
         [HttpPatch]
         public IHttpActionResult Update(int id, JsonApiPatch<Category> patch, IPrincipal user)
         {
-            var categoryToUpdate = _categoryService.Get(12);
+            var categoryToUpdate = _categoryService.Get(id);
             patch.Patch(categoryToUpdate);
 
             _categoryService.Update(categoryToUpdate);

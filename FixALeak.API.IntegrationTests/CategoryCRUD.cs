@@ -2,6 +2,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
 using System.Collections.Generic;
+using System.Net;
 
 namespace FixALeak.API.IntegrationTests
 {
@@ -49,12 +50,17 @@ namespace FixALeak.API.IntegrationTests
 
             var updatedCategory = JsonConvert.DeserializeObject<GenericJsonApiObject>(resultString);
 
-            Assert.AreEqual("abc", updatedCategory.Data.Id);
-
+            Assert.AreEqual("abc", updatedCategory.Data.Attributes["name"]);
 
             resultString = WebApiTests.WebClient.UploadString(API_BASE + "/" + addedCategory.Data.Id, "DELETE", "");
-            WebApiTests.WebClient.DownloadString(API_BASE + "/" + addedCategory.Data.Id);
+            try {
+                WebApiTests.WebClient.DownloadString(API_BASE + "/" + addedCategory.Data.Id);
+                Assert.Fail();
+            }
+            catch(WebException e)
+            {
 
+            }
 
         }
     }
