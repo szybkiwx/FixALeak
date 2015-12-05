@@ -56,10 +56,9 @@ namespace FixALeak.API.Controllers
                 return Conflict();
             }
             var created = _categoryService.AddCategory(category);
-            ;
 
             return Created(Url.Link("GetCategory", new { id = created.ID }), created);
-        } 
+        }
 
 
         [Route("{id:int}", Name = "GetCategory")]
@@ -69,7 +68,7 @@ namespace FixALeak.API.Controllers
 
             var userId = Guid.Parse(user.Identity.GetUserId());
             var result = _categoryService.Get(id);
-            if(result == null)
+            if (result == null)
             {
                 return NotFound();
             }
@@ -101,5 +100,16 @@ namespace FixALeak.API.Controllers
 
         }
 
+        [Route("{id:int}/relationships/{relationshipName}", Name = "GetCategoryRelationships")]
+        [HttpGet]
+        public IHttpActionResult GetRelationships(int id, string relationshipName, IPrincipal user)
+        {
+            if (relationshipName != "categoryleaves")
+            {
+                return NotFound();
+            }
+
+            return Ok(JsonApiRelationship<Category>.Create(_categoryService.Get(id), x => x.SubCategories));
+        }
     }
 }

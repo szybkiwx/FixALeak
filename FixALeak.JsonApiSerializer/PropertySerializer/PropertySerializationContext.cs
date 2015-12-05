@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 
 namespace FixALeak.JsonApiSerializer.PropertySerializer
@@ -33,5 +34,9 @@ namespace FixALeak.JsonApiSerializer.PropertySerializer
             return _strategies.FirstOrDefault(x => x.Key.Invoke(prop, obj)).Value;
         }
 
-     }
+        public IPropertySerializer GetSerializer<T>(T obj, Expression<Func<T, object>> prop)
+        {
+            return GetSerializer(obj, ExpressionToPropertyInfoConverter.Convert(prop));
+        }
+    }
 }

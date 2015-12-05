@@ -31,7 +31,13 @@ namespace FixALeak.API
         private bool IsPatch(Type type)
         {
             return type == typeof(JsonApiPatch) || type.BaseType == typeof(JsonApiPatch);
-        }     
+        }
+
+        private bool isRelationshipObject(Type type)
+        {
+            return (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(JsonApiRelationship<>))
+                || type == typeof(JsonApiRelationship);
+        }
 
         public override bool CanReadType(Type type)
         {
@@ -66,15 +72,23 @@ namespace FixALeak.API
                 return true;
             }
 
+            if(isRelationshipObject(type))
+            {
+                return true;
+            }
+
             return false;
         }
-
 
         public override void WriteToStream(Type type, object value, Stream writeStream, HttpContent content)
         {
             using (var writer = new StreamWriter(writeStream))
             {
-                if (isEntityCollection(type))
+                if (isRelationshipObject(type))
+                {
+                    writer.Write(SerializerBuilder.Create().SerializeRelationship((JsonApiRelationship)value).ToString());
+                }
+                else if (isEntityCollection(type))
                 {
                     writer.Write(SerializerBuilder.Create().Serialize(value as IEnumerable).ToString());
                 }

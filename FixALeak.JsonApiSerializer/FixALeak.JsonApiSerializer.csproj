@@ -56,10 +56,12 @@
   <ItemGroup>
     <Compile Include="CollectionFactory.cs" />
     <Compile Include="CollectionTypeNotSupported.cs" />
+    <Compile Include="ExpressionToPropertyInfoConverter.cs" />
     <Compile Include="FullObjectSerialzier.cs" />
     <Compile Include="IEntity.cs" />
     <Compile Include="ISingleObjectSerializer.cs" />
     <Compile Include="JsonApiPatch.cs" />
+    <Compile Include="JsonApiRelationship.cs" />
     <Compile Include="MalformedJsonApiDocumentException.cs" />
     <Compile Include="OutResourceObject.cs" />
     <Compile Include="PropertyDeserializer\CollectionPropertyDeserializer.cs" />
@@ -71,6 +73,7 @@
     <Compile Include="PropertyDeserializer\PropertyDeserilaizerAggregate.cs" />
     <Compile Include="PropertyDeserializer\ValuePropertyDeserializer.cs" />
     <Compile Include="PropertySerializer\CollectionPropertySerializer.cs" />
+    <Compile Include="PropertySerializer\FunctionalExtensions.cs" />
     <Compile Include="PropertySerializer\IPropertySerializationContext.cs" />
     <Compile Include="PropertySerializer\IPropertySerializer.cs" />
     <Compile Include="IRelationshipSerializer.cs" />

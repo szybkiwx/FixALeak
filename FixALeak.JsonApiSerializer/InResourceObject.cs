@@ -2,6 +2,8 @@
 using System;
 using System.Data.Entity.Design.PluralizationServices;
 using System.Globalization;
+using System.Linq.Expressions;
+using System.Reflection;
 
 namespace FixALeak.JsonApiSerializer
 {
@@ -84,6 +86,16 @@ namespace FixALeak.JsonApiSerializer
         public UrlBuilder GetRelatedSelfLink(string relationshipName)
         {
             return GetSelfLink().Resource("relationships").Resource(relationshipName);
+        }
+
+        public UrlBuilder GetRelatedSelfLink<T>(Expression<Func<T, object>> relProperty)
+        {
+            return GetSelfLink().Resource("relationships").Resource(PluralizationService.Pluralize(relProperty.Name));
+        }
+
+        public UrlBuilder GetRelatedSelfLink(PropertyInfo relProperty)
+        {
+            return GetSelfLink().Resource("relationships").Resource(PluralizationService.Pluralize(relProperty.Name));
         }
 
         public UrlBuilder GetRelatedSelfLink(string relationshipName, int id)

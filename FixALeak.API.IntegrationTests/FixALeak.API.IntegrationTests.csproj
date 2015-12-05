@@ -84,6 +84,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="CategoryCRUD.cs" />
+    <Compile Include="ExpenseCRUD.cs" />
     <Compile Include="GenericJsonApiCollection.cs" />
     <Compile Include="GenericJsonApiObject.cs" />
     <Compile Include="UnitTest1.cs" />

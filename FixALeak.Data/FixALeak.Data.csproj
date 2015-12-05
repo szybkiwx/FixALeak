@@ -50,8 +50,22 @@
     <Compile Include="Entities\CategoryLeaf.cs" />
     <Compile Include="Entities\Expense.cs" />
     <Compile Include="Entities\IEntity.cs" />
+    <Compile Include="Entities\Itinerary.cs" />
     <Compile Include="ExpenseContext.cs" />
     <Compile Include="IExpenseContext.cs" />
+    <Compile Include="Migrations\201506212111163_InitialCreate.cs" />
+    <Compile Include="Migrations\201506212111163_InitialCreate.Designer.cs">
+      <DependentUpon>201506212111163_InitialCreate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201511240011121_Update1.cs" />
+    <Compile Include="Migrations\201511240011121_Update1.Designer.cs">
+      <DependentUpon>201511240011121_Update1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201511240026380_AddItineraryTable.cs" />
+    <Compile Include="Migrations\201511240026380_AddItineraryTable.Designer.cs">
+      <DependentUpon>201511240026380_AddItineraryTable.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -60,6 +74,17 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Configurations\" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201506212111163_InitialCreate.resx">
+      <DependentUpon>201506212111163_InitialCreate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201511240011121_Update1.resx">
+      <DependentUpon>201511240011121_Update1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201511240026380_AddItineraryTable.resx">
+      <DependentUpon>201511240026380_AddItineraryTable.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

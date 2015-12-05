@@ -211,6 +211,7 @@
     <Compile Include="Filters\JsonReaderExceptionFilter.cs" />
     <Compile Include="FixALeakAuthServerProvider.cs" />
     <Compile Include="JsonApiMediaTypeFormatter.cs" />
+    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Auth\UserModel.cs" />
     <Compile Include="Extensions\CurrentUser.cs" />
     <Compile Include="Models\IPrincipalModelBinder.cs" />

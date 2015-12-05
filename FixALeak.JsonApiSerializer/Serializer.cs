@@ -5,6 +5,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 
 namespace FixALeak.JsonApiSerializer
@@ -28,7 +29,7 @@ namespace FixALeak.JsonApiSerializer
         {
             var resourceIdObject = new InResourceObject(obj);
             var serializedObject = _singleObjectSerializer.Serialize(obj);
-            JObject relationships = SerializeRelationships(obj);
+            JObject relationships = _SerializeRelationships(obj);
             serializedObject.Add(new JProperty("relationships", relationships));
             return JObject.FromObject(new
             {
@@ -61,7 +62,7 @@ namespace FixALeak.JsonApiSerializer
                 data = collection.Cast<object>().Select(x =>
                     {
                         var serializedObject = _singleObjectSerializer.Serialize(x);
-                        JObject relationships = SerializeRelationships(x);
+                        JObject relationships = _SerializeRelationships(x);
                         serializedObject.Add(new JProperty("relationships", relationships));
                         return serializedObject;
                     }),
@@ -70,8 +71,35 @@ namespace FixALeak.JsonApiSerializer
                                 .Aggregate((aggregate, current) => aggregate.Union(current))
             });
         }
-        
-        private JObject SerializeRelationships(object obj)
+
+        public JObject SerializeRelationship(JsonApiRelationship rel)
+        {
+            return SerializeRelationship(rel.Value, rel.Property);
+        }
+
+        public JObject SerializeRelationship<T>(T obj, PropertyInfo relationProperty)
+        {
+            /*var resourceIdObject = new InResourceObject(obj);
+            var t = new
+            {
+                links = new
+                {
+                    self = resourceIdObject.GetRelatedSelfLink(relationProperty)
+                },
+                data = _propertySerializationContext
+                    .GetSerializer(obj, relationProperty)
+                    .Serialize(obj, relationProperty)
+                    .Value
+
+            };*/
+            var result = _propertySerializationContext
+                    .GetSerializer(obj, relationProperty)
+                    .Serialize(obj, relationProperty)
+                    .Value;
+            return (JObject)result;
+        }
+
+        private JObject _SerializeRelationships(object obj)
         {
             Type type = obj.GetType();
 

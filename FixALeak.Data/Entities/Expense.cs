@@ -12,6 +12,7 @@ namespace FixALeak.Data.Entities
         public decimal Value { get; set; }
         public string Title { get; set; }
         public int CategoryLeafID { get; set; }
+        public int ItineraryID { get; set; }
         [ForeignKey("CategoryLeafID")]
         public virtual CategoryLeaf Category { get; set; }
     }

@@ -1,4 +1,6 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Linq.Expressions;
+using System.Reflection;
 
 namespace FixALeak.JsonApiSerializer.PropertySerializer
 {
@@ -10,5 +12,7 @@ namespace FixALeak.JsonApiSerializer.PropertySerializer
         //IEnumerable<JObject> SerializeFull(object obj, PropertyInfo prop);
 
         IPropertySerializer GetSerializer(object obj, PropertyInfo prop);
+
+        IPropertySerializer GetSerializer<T>(T obj, Expression<Func<T, object>> prop);
     }
 }
