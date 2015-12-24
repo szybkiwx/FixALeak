@@ -55,9 +55,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CollectionFactory.cs" />
-    <Compile Include="CollectionTypeNotSupported.cs" />
     <Compile Include="ExpressionToPropertyInfoConverter.cs" />
-    <Compile Include="FullObjectSerialzier.cs" />
     <Compile Include="IEntity.cs" />
     <Compile Include="ISingleObjectSerializer.cs" />
     <Compile Include="JsonApiPatch.cs" />
@@ -76,7 +74,6 @@
     <Compile Include="PropertySerializer\FunctionalExtensions.cs" />
     <Compile Include="PropertySerializer\IPropertySerializationContext.cs" />
     <Compile Include="PropertySerializer\IPropertySerializer.cs" />
-    <Compile Include="IRelationshipSerializer.cs" />
     <Compile Include="InResourceObject.cs" />
     <Compile Include="PropertySerializer\KeyPropertySerializer.cs" />
     <Compile Include="PropertySerializer\NotKeyPropertyException.cs" />
@@ -84,7 +81,6 @@
     <Compile Include="PropertySerializer\PropertySerializationContext.cs" />
     <Compile Include="PropertySerializer\PropertySerializerAggregate.cs" />
     <Compile Include="PropertySerializer\ValuePropertySerializer.cs" />
-    <Compile Include="RelationshipDeserializer.cs" />
     <Compile Include="RelationshipUpdateForbiddenException.cs" />
     <Compile Include="Serializer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

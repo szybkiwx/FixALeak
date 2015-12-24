@@ -52,6 +52,8 @@
     <Compile Include="ICategoryLeafService.cs" />
     <Compile Include="ICategoryService.cs" />
     <Compile Include="IExpenseService.cs" />
+    <Compile Include="IItineraryService.cs" />
+    <Compile Include="ItineraryService.cs" />
     <Compile Include="NavigationPropertyDoesNotExist.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -6,7 +6,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace FixALeak.Data.IntegrationTests
 {
-    [TestClass]
+    //[TestClass]
     public class EFTests
     {
         ExpenseContext ctx;

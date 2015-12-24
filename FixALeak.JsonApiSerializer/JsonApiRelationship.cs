@@ -12,9 +12,6 @@ namespace FixALeak.JsonApiSerializer
 
     public class JsonApiRelationship<T> : JsonApiRelationship
     {
-        //public T Value { get; private set; }
-        //public Expression<Func<T, object>> Property { get; private set; }
-
         private JsonApiRelationship()
         {
         }

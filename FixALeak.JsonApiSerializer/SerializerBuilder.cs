@@ -21,7 +21,7 @@ namespace FixALeak.JsonApiSerializer
 
         private static void RegisterTypes(UnityContainer container)
         {
-            container.RegisterType<Serializer>();
+            /*container.RegisterType<Serializer>();
             container.RegisterType<KeyPropertySerializer>();
             container.RegisterType<ValuePropertySerializer>();
             container.RegisterType<CollectionPropertySerializer>();
@@ -29,7 +29,13 @@ namespace FixALeak.JsonApiSerializer
             container.RegisterType<PropertySerializerAggregate>();
             container.RegisterType<IPropertySerializationContext, PropertySerializationContext>();
             container.RegisterType<IPorpertyDeserialziationContext, PorpertyDeserialziationContext>();
-            container.RegisterType<ISingleObjectSerializer, SingleObjectSerializer>(); 
+            container.RegisterType<ISingleObjectSerializer, SingleObjectSerializer>(); */
+            container.RegisterTypes(
+                AllClasses.FromAssembliesInBasePath(),
+                WithMappings.FromMatchingInterface,
+                WithName.Default,
+                WithLifetime.ContainerControlled);
         }
+    
     }
 }

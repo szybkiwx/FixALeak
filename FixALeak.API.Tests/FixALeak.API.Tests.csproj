@@ -71,6 +71,7 @@
     <Compile Include="CategoryLeafControllerTest.cs" />
     <Compile Include="ExpensesControllerTest.cs" />
     <Compile Include="FakeUserFactory.cs" />
+    <Compile Include="ItineraryControllerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RequestMessageBuilder.cs" />
   </ItemGroup>

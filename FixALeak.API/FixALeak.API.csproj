@@ -208,6 +208,7 @@
     <Compile Include="Controllers\CategoryController.cs" />
     <Compile Include="Controllers\CategoryLeafController.cs" />
     <Compile Include="Controllers\ExpenseController.cs" />
+    <Compile Include="Controllers\ItineraryController.cs" />
     <Compile Include="Filters\JsonReaderExceptionFilter.cs" />
     <Compile Include="FixALeakAuthServerProvider.cs" />
     <Compile Include="JsonApiMediaTypeFormatter.cs" />

@@ -103,7 +103,7 @@ namespace FixALeak.API.Tests
             _categoryService.Setup(x => x.Get(12)).Returns(
                 expected
             );
-            var response = sut.Get(12, FakeUserFactory.NewFakeUser(userId, ""));
+            var response = sut.Get(12);
 
             Assert.IsInstanceOfType(response, typeof(OkNegotiatedContentResult<Category>));
             Assert.AreEqual(expected, ((OkNegotiatedContentResult<Category>)response).Content);
@@ -111,7 +111,7 @@ namespace FixALeak.API.Tests
         }
 
         [TestMethod]
-        public void TestUpdate()
+        public void TestUpdateCategory()
         {
 
             var userId = Guid.NewGuid();
@@ -146,7 +146,7 @@ namespace FixALeak.API.Tests
         }
 
         [TestMethod]
-        public void TestDelete()
+        public void TestDeleteCategory()
         {
 
             var userId = Guid.NewGuid();

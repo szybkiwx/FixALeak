@@ -68,17 +68,6 @@ namespace FixALeak.API.IntegrationTests
         [TestMethod]
         public void Test_AddCategoryLeaves()
         {
-            /*var newCategory = new GenericJsonApiObject()
-            {
-                Data = new Data()
-                {
-                    Attributes = new Dictionary<string, object>()
-                    {
-                        { "name",  string.Format("test upload {0}", Guid.NewGuid()) },
-                    },
-                    Type = "categories"
-                }
-            };*/
             var newCategory = new
             {
                 data = new
@@ -131,8 +120,11 @@ namespace FixALeak.API.IntegrationTests
             var leafData = new List<Data>(leavesResult.Data);
             Assert.AreEqual(2, leafData.Count);
 
+
             WebApiTests.WebClient.UploadString(API_CATEGORY_LEAVES + "/" + addedCategoryLeaf1.Data.Id, "DELETE", "");
             WebApiTests.WebClient.UploadString(API_CATEGORY_LEAVES + "/" + addedCategoryLeaf2.Data.Id, "DELETE", "");
+
+            WebApiTests.WebClient.UploadString(API_CATEGORIES + "/" + addedCategory.Data.Id, "DELETE", "");
 
 
 

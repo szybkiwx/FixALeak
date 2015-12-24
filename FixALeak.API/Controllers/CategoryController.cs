@@ -63,10 +63,9 @@ namespace FixALeak.API.Controllers
 
         [Route("{id:int}", Name = "GetCategory")]
         [HttpGet]
-        public IHttpActionResult Get(int id, IPrincipal user)
+        public IHttpActionResult Get(int id)
         {
 
-            var userId = Guid.Parse(user.Identity.GetUserId());
             var result = _categoryService.Get(id);
             if (result == null)
             {
